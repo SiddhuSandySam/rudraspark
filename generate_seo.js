@@ -8,6 +8,7 @@ if (!fs.existsSync(OUTPUT_DIR)) {
 
 // Domain where this SEO site will be hosted for FREE (e.g., Vercel / Netlify)
 const DOMAIN = "https://rudraspark-seo-engine.vercel.app";
+const GOOGLE_VERIFICATION = '<meta name="google-site-verification" content="ueLjOKjISiD5rlHrSK510SAvXnyHheDauLQ_6yvlLW8" />';
 
 // 🚀 DYNAMIC DATA LOADERS: Read actual scraped data from project workspace
 const mainDataPath = path.join(__dirname, '..', 'index', 'static_api', 'hub_data.json');
@@ -57,6 +58,7 @@ function generateHtmlPage(city, subcategory, cityProviders) {
     <title>${title}</title>
     <meta name="description" content="${description}">
     <meta name="robots" content="index, follow">
+    ${GOOGLE_VERIFICATION}
     <link rel="canonical" href="${DOMAIN}/${city.toLowerCase()}-${subcategory.toLowerCase().replace(/\s+/g, '-')}.html">
     <!-- Schema.org Structured Data -->
     <script type="application/ld+json">
@@ -100,7 +102,6 @@ function generateHtmlPage(city, subcategory, cityProviders) {
 function buildDynamicSeo() {
     console.log("🚀 Building Fully Dynamic Programmatic SEO Engine for all States, Cities & Subcategories...");
 
-    // Generate index.html for root URL
     const indexHtml = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -108,6 +109,7 @@ function buildDynamicSeo() {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RudraSpark - Local Services & Rentals</title>
     <meta name="description" content="Find verified local service providers and rentals across India. Download the RudraSpark app now!">
+    ${GOOGLE_VERIFICATION}
     <style>
         body { font-family: system-ui, sans-serif; background: #f8f9fd; margin: 0; padding: 40px; text-align: center; color: #333; }
         .card { max-width: 600px; margin: 0 auto; background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); margin-top: 50px; }
