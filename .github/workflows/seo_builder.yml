@@ -1,0 +1,29 @@
+name: Automated pSEO Batch Builder
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 */6 * * *' # Runs automatically every 6 hours on GitHub Cloud
+
+jobs:
+  build-seo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run Batch SEO Generator
+        run: node generate_seo_batch.js
+
+      - name: Commit and push generated pages
+        run: |
+          git config --global user.name 'SEO Automation Bot'
+          git config --global user.email 'bot@rudraspark.com'
+          git add public/ progress.json
+          git commit -m "Auto-generated SEO batch pages [skip ci]" || exit 0
+          git push

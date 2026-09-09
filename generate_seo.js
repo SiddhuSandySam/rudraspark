@@ -11,26 +11,33 @@ const DOMAIN = "https://rudraspark-seo-engine.vercel.app";
 const GOOGLE_VERIFICATION = '<meta name="google-site-verification" content="ueLjOKjISiD5rlHrSK510SAvXnyHheDauLQ_6yvlLW8" />';
 const RAW_IMAGE_URL = "https://raw.githubusercontent.com/SiddhuSandySam/kaamwaleasset/main/Sandeshkoli.png";
 
-// 🚀 DYNAMIC DATA LOADERS: Read actual scraped data from absolute workspace path
-const registryPath = "F:/kaamwale/index/static_api/master_registry.json";
-
+// 🚀 DYNAMIC DATA LOADER: Scan absolute state grid folders (`*_grids/*.json`) for rich provider data
+const staticApiDir = "F:/kaamwale/index/static_api";
 let allProviders = [];
 
 try {
-    if (fs.existsSync(registryPath)) {
-        const regData = JSON.parse(fs.readFileSync(registryPath, 'utf8'));
-        allProviders = Array.isArray(regData) ? regData : Object.values(regData);
-        console.log(`✅ Loaded ${allProviders.length} real providers from Master Registry for Dynamic SEO.`);
+    if (fs.existsSync(staticApiDir)) {
+        const items = fs.readdirSync(staticApiDir);
+        items.forEach(item => {
+            if (item.endsWith('_grids')) {
+                const gridDirPath = path.join(staticApiDir, item);
+                if (fs.statSync(gridDirPath).isDirectory()) {
+                    const gridFiles = fs.readdirSync(gridDirPath).filter(f => f.endsWith('.json'));
+                    gridFiles.forEach(gf => {
+                        try {
+                            const gridData = JSON.parse(fs.readFileSync(path.join(gridDirPath, gf), 'utf8'));
+                            if (Array.isArray(gridData)) {
+                                allProviders.push(...gridData);
+                            }
+                        } catch (err) {}
+                    });
+                }
+            }
+        });
+        console.log(`✅ Loaded ${allProviders.length} rich providers dynamically from state grid files!`);
     }
 } catch (e) {
-    console.warn("⚠️ Could not load master_registry.json: " + e.message);
-}
-
-if (allProviders.length === 0) {
-    allProviders = [
-        { businessName: "Sai Plumber Services", subcategory: "Plumber", city: "Pune", state: "Maharashtra", fullAddress: "MG Road, Camp, Pune", callNumber: "9876543210", rating: 4.8 },
-        { businessName: "Electrician Expert Pune", subcategory: "Electrician", city: "Pune", state: "Maharashtra", fullAddress: "Deccan Gymkhana, Pune", callNumber: "9876543211", rating: 4.6 }
-    ];
+    console.warn("⚠️ Grid loading warning: " + e.message);
 }
 
 const categoriesBar = [
@@ -77,7 +84,7 @@ function generateHtmlPage(city, subcategory, cityProviders) {
                 ${p.whatsappNumber ? `<a href="https://wa.me/91${String(p.whatsappNumber).replace(/[^0-9]/g, '')}" target="_blank" style="background: #25d366; color: white; padding: 8px 22px; border-radius: 25px; text-decoration: none; font-weight: bold; font-size: 13px; text-align: center;">💬 WhatsApp</a>` : ''}
             </div>
         </div>
-    `).join('') : `<p style="color: #94a3b8; text-align: center; padding: 30px;">No direct listings in this exact area. Download the RudraSpark app to explore all nearby experts!</p>`;
+    `).join('') : `<p style="color: #94a3b8; text-align: center; padding: 30px;">Explore all verified ${subcategory} experts in ${city} on the RudraSpark App!</p>`;
 
     return `<!DOCTYPE html>
 <html lang="en">
@@ -203,7 +210,7 @@ function generateHtmlPage(city, subcategory, cityProviders) {
 }
 
 function buildDynamicSeo() {
-    console.log("🚀 Building Fully Dynamic Programmatic SEO Engine for all States, Cities & Subcategories...");
+    console.log("🚀 Building Fully Dynamic Programmatic SEO Engine from State Grids...");
 
     const indexHtml = `<!DOCTYPE html>
 <html lang="en">
@@ -305,6 +312,7 @@ function buildDynamicSeo() {
     });
 
     const sitemapUrls = [];
+    sitemapUrls.json = [];
     sitemapUrls.push(`<url><loc>${DOMAIN}/</loc><changefreq>daily</changefreq><priority>1.0</priority></url>`);
 
     let count = 0;
