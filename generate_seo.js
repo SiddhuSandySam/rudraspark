@@ -102,27 +102,70 @@ function generateHtmlPage(city, subcategory, cityProviders) {
 function buildDynamicSeo() {
     console.log("🚀 Building Fully Dynamic Programmatic SEO Engine for all States, Cities & Subcategories...");
 
+    const rawImageUrl = "https://raw.githubusercontent.com/SiddhuSandySam/kaamwaleasset/main/Sandeshkoli.png";
     const indexHtml = `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RudraSpark - Local Services & Rentals</title>
-    <meta name="description" content="Find verified local service providers and rentals across India. Download the RudraSpark app now!">
+    <title>RudraSpark - India's Fastest Local Services & Rental Network</title>
+    <meta name="description" content="Connect with 3.5 Lakh+ verified local professionals and rental providers across 16+ states. Founded by Sandesh Koli. Download RudraSpark now!">
     ${GOOGLE_VERIFICATION}
     <style>
-        body { font-family: system-ui, sans-serif; background: #f8f9fd; margin: 0; padding: 40px; text-align: center; color: #333; }
-        .card { max-width: 600px; margin: 0 auto; background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); margin-top: 50px; }
-        h1 { color: #1a73e8; }
-        .btn { display: inline-block; background: #000; color: #fff; padding: 15px 30px; border-radius: 30px; text-decoration: none; font-weight: bold; margin-top: 20px; }
+        * { box-sizing: border-box; }
+        body { font-family: system-ui, -apple-system, sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 0; line-height: 1.6; }
+        .hero { max-width: 1200px; margin: 0 auto; padding: 60px 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 40px; }
+        .hero-content { flex: 1; min-width: 300px; }
+        .hero-image { flex: 1; min-width: 300px; text-align: center; }
+        .hero-image img { max-width: 100%; width: 420px; border-radius: 24px; box-shadow: 0 20px 50px rgba(26,115,232,0.3); border: 2px solid rgba(26,115,232,0.4); }
+        h1 { font-size: 42px; font-weight: 800; margin-bottom: 20px; color: #fff; letter-spacing: -1px; }
+        h1 span { color: #38bdf8; }
+        p { font-size: 18px; color: #94a3b8; margin-bottom: 30px; }
+        .stats { display: flex; gap: 30px; margin-bottom: 35px; }
+        .stat-item h3 { font-size: 28px; color: #f8fafc; margin: 0; font-weight: 800; }
+        .stat-item p { font-size: 14px; margin: 0; color: #64748b; }
+        .btn { display: inline-block; background: #1a73e8; color: #fff; padding: 16px 36px; border-radius: 30px; text-decoration: none; font-weight: bold; font-size: 16px; box-shadow: 0 10px 25px rgba(26,115,232,0.4); transition: transform 0.2s; }
+        .btn:hover { transform: translateY(-2px); }
+        .founder-badge { display: inline-flex; align-items: center; background: rgba(255,255,255,0.05); padding: 8px 16px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px; font-size: 14px; color: #cbd5e1; }
+        .founder-badge strong { color: #38bdf8; margin-left: 6px; }
+        footer { text-align: center; padding: 40px; color: #64748b; border-top: 1px solid rgba(255,255,255,0.05); margin-top: 60px; font-size: 14px; }
+        @media(max-width: 768px) { h1 { font-size: 32px; } .hero { padding: 30px 15px; } }
     </style>
 </head>
 <body>
-    <div class="card">
-        <h1>🛠️ RudraSpark Local Services</h1>
-        <p>Connecting you with 3.5 Lakh+ verified local professionals and rental providers across India.</p>
-        <a href="https://play.google.com/store/apps/details?id=com.sandeshkoli.kaamwale" class="btn">📲 Download App on Google Play</a>
+    <div class="hero">
+        <div class="hero-content">
+            <div class="founder-badge">
+                🚀 Vision & Leadership <strong>Sandesh Koli</strong>
+            </div>
+            <h1>India's Fastest <span>Local Services & Rental</span> Ecosystem</h1>
+            <p>Connecting you instantly with over <strong>3.5 Lakh+ verified professionals</strong> and rental providers across 16+ states. Fast, Local, and Trusted.</p>
+
+            <div class="stats">
+                <div class="stat-item">
+                    <h3>3.5L+</h3>
+                    <p>Verified Pros</p>
+                </div>
+                <div class="stat-item">
+                    <h3>16+</h3>
+                    <p>States Active</p>
+                </div>
+                <div class="stat-item">
+                    <h3>100%</h3>
+                    <p>Direct Connect</p>
+                </div>
+            </div>
+
+            <a href="https://play.google.com/store/apps/details?id=com.sandeshkoli.kaamwale" class="btn">📲 Download RudraSpark App</a>
+        </div>
+        <div class="hero-image">
+            <img src="${rawImageUrl}" alt="Sandesh Koli - Founder & CEO RudraSpark">
+        </div>
     </div>
+
+    <footer>
+        <p>&copy; ${new Date().getFullYear()} RudraSpark (KaamWale). Founded with passion by <strong>Sandesh Koli</strong>. All rights reserved.</p>
+    </footer>
 </body>
 </html>`;
     fs.writeFileSync(path.join(OUTPUT_DIR, 'index.html'), indexHtml);
