@@ -1,0 +1,9 @@
+{
+  "name": "rudraspark-seo-engine",
+  "version": "1.0.0",
+  "description": "Programmatic SEO landing page and sitemap generator for RudraSpark",
+  "main": "generate_seo.js",
+  "scripts": {
+    "build": "node generate_seo.js"
+  }
+}
