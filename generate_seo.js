@@ -9,13 +9,29 @@ if (!fs.existsSync(OUTPUT_DIR)) {
 // Domain where this SEO site will be hosted for FREE (e.g., Vercel / Netlify)
 const DOMAIN = "https://rudraspark-local.vercel.app";
 
-// Example: Load your 3.5L providers from JSON or mock sample
-// In production, you can read your master_registry.json or exported sheets JSON
-const providers = [
-    { businessName: "Sai Plumber Services", subcategory: "Plumber", city: "Pune", state: "Maharashtra", fullAddress: "MG Road, Camp, Pune", callNumber: "9876543210", rating: 4.8 },
-    { businessName: "Electrician Expert Pune", subcategory: "Electrician", city: "Pune", state: "Maharashtra", fullAddress: "Deccan Gymkhana, Pune", callNumber: "9876543211", rating: 4.6 },
-    { businessName: "Mumbai AC Repair Hub", subcategory: "AC Repair", city: "Mumbai", state: "Maharashtra", fullAddress: "Andheri West, Mumbai", callNumber: "9876543212", rating: 4.7 }
-];
+// 🚀 DYNAMIC DATA LOADERS: Read actual scraped data from project workspace
+const mainDataPath = path.join(__dirname, '..', 'index', 'static_api', 'hub_data.json');
+const registryPath = path.join(__dirname, '..', 'index', 'static_api', 'master_registry.json');
+
+let allProviders = [];
+
+try {
+    if (fs.existsSync(registryPath)) {
+        const regData = JSON.parse(fs.readFileSync(registryPath, 'utf8'));
+        allProviders = Array.isArray(regData) ? regData : Object.values(regData);
+        console.log(`✅ Loaded ${allProviders.length} real providers from Master Registry for Dynamic SEO.`);
+    }
+} catch (e) {
+    console.warn("⚠️ Could not load master_registry.json, falling back to sample data.");
+}
+
+// Fallback if no local files found
+if (allProviders.length === 0) {
+    allProviders = [
+        { businessName: "Sai Plumber Services", subcategory: "Plumber", city: "Pune", state: "Maharashtra", fullAddress: "MG Road, Camp, Pune", callNumber: "9876543210", rating: 4.8 },
+        { businessName: "Electrician Expert Pune", subcategory: "Electrician", city: "Pune", state: "Maharashtra", fullAddress: "Deccan Gymkhana, Pune", callNumber: "9876543211", rating: 4.6 }
+    ];
+}
 
 function generateHtmlPage(city, subcategory, cityProviders) {
     const title = `Best ${subcategory} in ${city} | Verified Local Experts - RudraSpark`;
@@ -25,11 +41,11 @@ function generateHtmlPage(city, subcategory, cityProviders) {
     let providerCardsHtml = cityProviders.map(p => `
         <div style="background: white; border-radius: 12px; padding: 20px; margin-bottom: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); display: flex; align-items: center; justify-content: space-between;">
             <div>
-                <h3 style="margin: 0 0 5px 0; color: #1a73e8;">${p.businessName}</h3>
-                <p style="margin: 0 0 5px 0; color: #555; font-size: 14px;">📍 ${p.fullAddress || p.city}</p>
+                <h3 style="margin: 0 0 5px 0; color: #1a73e8;">${p.businessName || p.name || 'Verified Professional'}</h3>
+                <p style="margin: 0 0 5px 0; color: #555; font-size: 14px;">📍 ${p.fullAddress || p.addr || city}</p>
                 <p style="margin: 0; color: #e37400; font-weight: bold;">⭐ ${p.rating || '4.5'} / 5.0</p>
             </div>
-            <a href="tel:${p.callNumber}" style="background: #1a73e8; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: bold;">📞 Call Now</a>
+            <a href="tel:${p.callNumber || p.phone || ''}" style="background: #1a73e8; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: bold;">📞 Call Now</a>
         </div>
     `).join('');
 
@@ -47,9 +63,9 @@ function generateHtmlPage(city, subcategory, cityProviders) {
     {
       "@context": "https://schema.org",
       "@type": "LocalBusiness",
-      "name": "RudraSpark Local Services ${city}",
+      "name": "RudraSpark ${subcategory} in ${city}",
       "description": "${description}",
-      "address": { "@type": "PostalAddress", "addressLocality": "${city}", "addressRegion": "Maharashtra", "addressCountry": "IN" }
+      "address": { "@type": "PostalAddress", "addressLocality": "${city}", "addressRegion": "India", "addressCountry": "IN" }
     }
     </script>
     <style>
@@ -63,7 +79,7 @@ function generateHtmlPage(city, subcategory, cityProviders) {
 <body>
     <div class="header">
         <h1 style="margin:0;">🛠️ RudraSpark Local Services</h1>
-        <p style="margin:10px 0 0 0; opacity:0.9;">Verified local experts in ${city}</p>
+        <p style="margin:10px 0 0 0; opacity:0.9;">Verified ${subcategory} experts in ${city}</p>
     </div>
     <div class="container">
         <h2>Top Verified ${subcategory} in ${city}</h2>
@@ -81,22 +97,27 @@ function generateHtmlPage(city, subcategory, cityProviders) {
 </html>`;
 }
 
-function buildProgrammaticSeo() {
-    console.log("🚀 Generating Programmatic SEO Pages & Sitemap...");
+function buildDynamicSeo() {
+    console.log("🚀 Building Fully Dynamic Programmatic SEO Engine for all States, Cities & Subcategories...");
 
     const grouped = {};
-    providers.forEach(p => {
-        if (!p.city || !p.subcategory) return;
-        const key = `${p.city}_${p.subcategory}`.toLowerCase().replace(/\s+/g, '-');
+    allProviders.forEach(p => {
+        const city = p.city || p.locality || "India";
+        const subcategory = p.subcategory || p.primaryCategoryId || "General Service";
+        const key = `${city}_${subcategory}`.toLowerCase().replace(/[^a-z0-9]/g, '-');
+
         if (!grouped[key]) {
-            grouped[key] = { city: p.city, subcategory: p.subcategory, items: [] };
+            grouped[key] = { city, subcategory, items: [] };
         }
-        grouped[key].items.push(p);
+        if (grouped[key].items.length < 20) {
+            grouped[key].items.push(p);
+        }
     });
 
     const sitemapUrls = [];
     sitemapUrls.push(`<url><loc>${DOMAIN}/</loc><changefreq>daily</changefreq><priority>1.0</priority></url>`);
 
+    let count = 0;
     Object.keys(grouped).forEach(key => {
         const group = grouped[key];
         const fileName = `${key}.html`;
@@ -104,7 +125,7 @@ function buildProgrammaticSeo() {
 
         fs.writeFileSync(path.join(OUTPUT_DIR, fileName), htmlContent);
         sitemapUrls.push(`<url><loc>${DOMAIN}/${fileName}</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>`);
-        console.log(`   ✅ Generated: ${fileName}`);
+        count++;
     });
 
     const sitemapContent = `<?xml version="1.0" encoding="UTF-8"?>
@@ -113,7 +134,7 @@ ${sitemapUrls.join('\n')}
 </urlset>`;
 
     fs.writeFileSync(path.join(OUTPUT_DIR, 'sitemap.xml'), sitemapContent);
-    console.log(`\n🎉 Sitemap generated successfully with ${sitemapUrls.length} pages!`);
+    console.log(`\n🎉 Success! Generated ${count} dynamic SEO landing pages and sitemap.xml!`);
 }
 
-buildProgrammaticSeo();
+buildDynamicSeo();
