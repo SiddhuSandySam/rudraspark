@@ -6,6 +6,7 @@ if (!fs.existsSync(OUTPUT_DIR)) {
     fs.mkdirSync(OUTPUT_DIR, { recursive: true });
 }
 
+// Domain where this SEO site will be hosted for FREE (e.g., Vercel / Netlify)
 const DOMAIN = "https://rudraspark-seo-engine.vercel.app";
 const GOOGLE_VERIFICATION = '<meta name="google-site-verification" content="ueLjOKjISiD5rlHrSK510SAvXnyHheDauLQ_6yvlLW8" />';
 const RAW_IMAGE_URL = "https://raw.githubusercontent.com/SiddhuSandySam/kaamwaleasset/main/Sandeshkoli.png";
@@ -134,6 +135,26 @@ function generateHtmlPage(city, subcategory, cityProviders) {
 function buildDynamicSeo() {
     console.log("🚀 Building Fully Dynamic Programmatic SEO Engine for all States, Cities & Subcategories...");
 
+    const categoriesBar = [
+        { name: "Rental", icon: "https://raw.githubusercontent.com/SiddhuSandySam/kaamwaleasset/main/cat_rental.png" },
+        { name: "Agri Services", icon: "https://raw.githubusercontent.com/SiddhuSandySam/kaamwaleasset/main/cat_agri.png" },
+        { name: "Fabrication", icon: "https://raw.githubusercontent.com/SiddhuSandySam/kaamwaleasset/main/cat_fabrication.png" },
+        { name: "Logistics", icon: "https://raw.githubusercontent.com/SiddhuSandySam/kaamwaleasset/main/cat_logistics.png" },
+        { name: "Printing", icon: "https://raw.githubusercontent.com/SiddhuSandySam/kaamwaleasset/main/cat_print.png" },
+        { name: "Solar Expert", icon: "https://raw.githubusercontent.com/SiddhuSandySam/kaamwaleasset/main/cat_solar.png" },
+        { name: "Tailoring", icon: "https://raw.githubusercontent.com/SiddhuSandySam/kaamwaleasset/main/cat_tailor.png" },
+        { name: "Home Services", icon: "https://raw.githubusercontent.com/SiddhuSandySam/kaamwaleasset/main/HomeServicesicon.png" },
+        { name: "Auto Services", icon: "https://raw.githubusercontent.com/SiddhuSandySam/kaamwaleasset/main/AutoServices.png" },
+        { name: "Beauty & Wellness", icon: "https://raw.githubusercontent.com/SiddhuSandySam/kaamwaleasset/main/BeautyWellness.png" }
+    ];
+
+    let catHtml = categoriesBar.map(c => `
+        <div style="background: linear-gradient(135deg, #1e293b, #0f172a); border: 1px solid rgba(56, 189, 248, 0.2); border-radius: 20px; padding: 20px 15px; text-align: center; width: 130px; height: 130px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 8px 25px rgba(0,0,0,0.3); transition: transform 0.2s, box-shadow 0.2s; cursor: pointer; flex-shrink: 0;" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 12px 30px rgba(56,189,248,0.3)'; this.style.borderColor='#38bdf8'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 25px rgba(0,0,0,0.3)'; this.style.borderColor='rgba(56,189,248,0.2)'">
+            <img src="${c.icon}" alt="${c.name}" style="width: 52px; height: 52px; object-fit: contain; margin-bottom: 8px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4));">
+            <div style="font-size: 12px; color: #f8fafc; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%;">${c.name}</div>
+        </div>
+    `).join('');
+
     const indexHtml = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -160,6 +181,13 @@ function buildDynamicSeo() {
         .founder-badge { display: inline-flex; align-items: center; background: rgba(255,255,255,0.05); padding: 8px 16px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px; font-size: 14px; color: #cbd5e1; }
         .stat-item { background: rgba(255,255,255,0.03); padding: 15px 25px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); }
         .founder-badge strong { color: #38bdf8; margin-left: 6px; }
+
+        .category-section { max-width: 1200px; margin: 60px auto 40px auto; padding: 0 20px; text-align: center; }
+        .category-section h3 { font-size: 26px; color: #fff; margin-bottom: 25px; font-weight: 800; }
+        .category-scroll { display: flex; gap: 20px; overflow-x: auto; padding: 15px 5px; scrollbar-width: thin; scrollbar-color: #1a73e8 #1e293b; }
+        .category-scroll::-webkit-scrollbar { height: 6px; }
+        .category-scroll::-webkit-scrollbar-thumb { background: #1a73e8; border-radius: 10px; }
+
         footer { text-align: center; padding: 40px; color: #64748b; border-top: 1px solid rgba(255,255,255,0.05); margin-top: 60px; font-size: 14px; }
         @media(max-width: 768px) { h1 { font-size: 32px; } .hero { padding: 30px 15px; } }
     </style>
@@ -192,6 +220,14 @@ function buildDynamicSeo() {
         </div>
         <div class="hero-image">
             <img src="${RAW_IMAGE_URL}" alt="Sandesh Koli - Founder & CEO RudraSpark">
+        </div>
+    </div>
+
+    <!-- Category Icons Horizontal Strip (Square with rounded corners + shadow + raw.githubusercontent.com URLs) -->
+    <div class="category-section">
+        <h3>Explore Popular Categories & Rentals</h3>
+        <div class="category-scroll">
+            ${catHtml}
         </div>
     </div>
 
