@@ -11,8 +11,7 @@ const DOMAIN = "https://rudraspark-seo-engine.vercel.app";
 const GOOGLE_VERIFICATION = '<meta name="google-site-verification" content="ueLjOKjISiD5rlHrSK510SAvXnyHheDauLQ_6yvlLW8" />';
 const RAW_IMAGE_URL = "https://raw.githubusercontent.com/SiddhuSandySam/kaamwaleasset/main/Sandeshkoli.png";
 
-// 🚀 DYNAMIC DATA LOADERS: Read actual scraped data from project workspace
-const mainDataPath = path.join(__dirname, '..', 'index', 'static_api', 'hub_data.json');
+// 🚀 DYNAMIC DATA LOADERS: Read actual scraped data from project workspace (NO HARDCODE)
 const registryPath = path.join(__dirname, '..', 'index', 'static_api', 'master_registry.json');
 
 let allProviders = [];
@@ -24,14 +23,7 @@ try {
         console.log(`✅ Loaded ${allProviders.length} real providers from Master Registry for Dynamic SEO.`);
     }
 } catch (e) {
-    console.warn("⚠️ Could not load master_registry.json, falling back to sample data.");
-}
-
-if (allProviders.length === 0) {
-    allProviders = [
-        { businessName: "Sai Plumber Services", subcategory: "Plumber", city: "Pune", state: "Maharashtra", fullAddress: "MG Road, Camp, Pune", callNumber: "9876543210", rating: 4.8 },
-        { businessName: "Electrician Expert Pune", subcategory: "Electrician", city: "Pune", state: "Maharashtra", fullAddress: "Deccan Gymkhana, Pune", callNumber: "9876543211", rating: 4.6 }
-    ];
+    console.warn("⚠️ Could not load master_registry.json.");
 }
 
 const categoriesBar = [
@@ -56,19 +48,29 @@ const catHtml = categoriesBar.map(c => `
 
 function generateHtmlPage(city, subcategory, cityProviders) {
     const title = `Best ${subcategory} in ${city} | Verified Local Experts - RudraSpark`;
-    const description = `Looking for trusted ${subcategory} in ${city}? Find top-rated verified local professionals with phone numbers and ratings on RudraSpark. Founded by Sandesh Koli. Download app now!`;
+    const description = `Looking for trusted ${subcategory} in ${city}? Find top-rated verified local professionals with phone numbers, experience, and pricing on RudraSpark. Founded by Sandesh Koli. Download app now!`;
     const playStoreUrl = "https://play.google.com/store/apps/details?id=com.sandeshkoli.kaamwale";
 
-    let providerCardsHtml = cityProviders.map(p => `
-        <div style="background: white; border-radius: 14px; padding: 22px; margin-bottom: 16px; box-shadow: 0 6px 20px rgba(0,0,0,0.06); display: flex; align-items: center; justify-content: space-between; border: 1px solid #e2e8f0;">
-            <div>
-                <h3 style="margin: 0 0 6px 0; color: #1a73e8; font-size: 18px;">${p.businessName || p.name || 'Verified Professional'}</h3>
-                <p style="margin: 0 0 6px 0; color: #64748b; font-size: 14px;">📍 ${p.fullAddress || p.addr || city}</p>
-                <p style="margin: 0; color: #d97706; font-weight: bold; font-size: 14px;">⭐ ${p.rating || '4.5'} / 5.0 Verified Expert</p>
+    let providerCardsHtml = cityProviders.length > 0 ? cityProviders.map(p => `
+        <div style="background: white; border-radius: 16px; padding: 24px; margin-bottom: 18px; box-shadow: 0 8px 25px rgba(0,0,0,0.08); display: flex; align-items: center; justify-content: space-between; border: 1px solid #e2e8f0; gap: 20px;">
+            <div style="display: flex; align-items: center; gap: 16px; flex: 1;">
+                ${p.profilePhotoUrl ? `<img src="${p.profilePhotoUrl}" alt="${p.businessName}" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid #1a73e8; flex-shrink: 0;">` : `<div style="width: 60px; height: 60px; border-radius: 50%; background: #e0f2fe; color: #1a73e8; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 22px; flex-shrink: 0;">🛠️</div>`}
+                <div>
+                    <h3 style="margin: 0 0 6px 0; color: #1e293b; font-size: 18px; font-weight: 700;">${p.businessName || p.name || 'Verified Professional'}</h3>
+                    <p style="margin: 0 0 6px 0; color: #64748b; font-size: 14px;">📍 ${p.fullAddress || p.locality || p.city || city}</p>
+                    <div style="display: flex; gap: 12px; font-size: 13px; color: #475569; font-weight: 600; flex-wrap: wrap;">
+                        <span style="color: #d97706;">⭐ ${p.rating ? p.rating.toFixed(1) : '4.5'} / 5.0</span>
+                        ${p.experienceYears ? `<span>🏆 ${p.experienceYears} Yrs Exp</span>` : ''}
+                        ${p.startingPrice ? `<span>💰 ₹${p.startingPrice} ${p.priceUnit || ''}</span>` : ''}
+                    </div>
+                </div>
             </div>
-            <a href="tel:${p.callNumber || p.phone || ''}" style="background: #1a73e8; color: white; padding: 12px 24px; border-radius: 30px; text-decoration: none; font-weight: bold; font-size: 14px; box-shadow: 0 4px 12px rgba(26,115,232,0.3);">📞 Call Now</a>
+            <div style="display: flex; flex-direction: column; gap: 8px; flex-shrink: 0;">
+                <a href="tel:${p.callNumber || p.whatsappNumber || ''}" style="background: #1a73e8; color: white; padding: 10px 22px; border-radius: 25px; text-decoration: none; font-weight: bold; font-size: 14px; text-align: center; box-shadow: 0 4px 12px rgba(26,115,232,0.3);">📞 Call</a>
+                ${p.whatsappNumber ? `<a href="https://wa.me/91${String(p.whatsappNumber).replace(/[^0-9]/g, '')}" target="_blank" style="background: #25d366; color: white; padding: 8px 22px; border-radius: 25px; text-decoration: none; font-weight: bold; font-size: 13px; text-align: center;">💬 WhatsApp</a>` : ''}
+            </div>
         </div>
-    `).join('');
+    `).join('') : `<p style="color: #94a3b8; text-align: center; padding: 30px;">No direct listings in this exact area. Download the RudraSpark app to explore all nearby experts!</p>`;
 
     return `<!DOCTYPE html>
 <html lang="en">
@@ -109,7 +111,7 @@ function generateHtmlPage(city, subcategory, cityProviders) {
         .stat-item p { font-size: 13px; margin: 0; color: #64748b; }
         .stat-item { background: rgba(255,255,255,0.03); padding: 12px 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); }
 
-        .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; padding: 20px; }
         .cta-banner { background: linear-gradient(135deg, #1a73e8, #0284c7); border-radius: 20px; padding: 40px; text-align: center; box-shadow: 0 15px 40px rgba(26,115,232,0.4); margin-top: 50px; }
         .btn { display: inline-block; background: #fff; color: #0f172a; padding: 16px 36px; border-radius: 30px; text-decoration: none; font-weight: bold; font-size: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); transition: transform 0.2s; }
         .btn:hover { transform: translateY(-2px); }
