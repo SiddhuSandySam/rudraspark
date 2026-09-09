@@ -7,7 +7,7 @@ if (!fs.existsSync(OUTPUT_DIR)) {
 }
 
 // Domain where this SEO site will be hosted for FREE (e.g., Vercel / Netlify)
-const DOMAIN = "https://rudraspark-local.vercel.app";
+const DOMAIN = "https://rudraspark-seo-engine.vercel.app";
 
 // 🚀 DYNAMIC DATA LOADERS: Read actual scraped data from project workspace
 const mainDataPath = path.join(__dirname, '..', 'index', 'static_api', 'hub_data.json');
@@ -100,6 +100,31 @@ function generateHtmlPage(city, subcategory, cityProviders) {
 function buildDynamicSeo() {
     console.log("🚀 Building Fully Dynamic Programmatic SEO Engine for all States, Cities & Subcategories...");
 
+    // Generate index.html for root URL
+    const indexHtml = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RudraSpark - Local Services & Rentals</title>
+    <meta name="description" content="Find verified local service providers and rentals across India. Download the RudraSpark app now!">
+    <style>
+        body { font-family: system-ui, sans-serif; background: #f8f9fd; margin: 0; padding: 40px; text-align: center; color: #333; }
+        .card { max-width: 600px; margin: 0 auto; background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); margin-top: 50px; }
+        h1 { color: #1a73e8; }
+        .btn { display: inline-block; background: #000; color: #fff; padding: 15px 30px; border-radius: 30px; text-decoration: none; font-weight: bold; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>🛠️ RudraSpark Local Services</h1>
+        <p>Connecting you with 3.5 Lakh+ verified local professionals and rental providers across India.</p>
+        <a href="https://play.google.com/store/apps/details?id=com.sandeshkoli.kaamwale" class="btn">📲 Download App on Google Play</a>
+    </div>
+</body>
+</html>`;
+    fs.writeFileSync(path.join(OUTPUT_DIR, 'index.html'), indexHtml);
+
     const grouped = {};
     allProviders.forEach(p => {
         const city = p.city || p.locality || "India";
@@ -134,7 +159,7 @@ ${sitemapUrls.join('\n')}
 </urlset>`;
 
     fs.writeFileSync(path.join(OUTPUT_DIR, 'sitemap.xml'), sitemapContent);
-    console.log(`\n🎉 Success! Generated ${count} dynamic SEO landing pages and sitemap.xml!`);
+    console.log(`\n🎉 Success! Generated index.html, ${count} dynamic SEO landing pages and sitemap.xml!`);
 }
 
 buildDynamicSeo();
