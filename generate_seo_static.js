@@ -14,6 +14,26 @@ const RAW_IMAGE_URL = "https://raw.githubusercontent.com/SiddhuSandySam/kaamwale
 const staticApiDir = "F:/kaamwale/index/static_api";
 let allProviders = [];
 
+function getCleanCity(p) {
+    let c = p.city || p.locality || "";
+    // If city is empty, starts with a number, or contains 'floor' / 'shop', parse fullAddress
+    if (!c || /^\d/.test(c) || c.toLowerCase().includes('floor') || c.toLowerCase().includes('shop') || c.toLowerCase().includes('room')) {
+        if (p.fullAddress) {
+            const parts = p.fullAddress.split(',').map(s => s.trim());
+            // Find a part that doesn't have numbers or is a state/city name
+            const validPart = parts.reverse().find(part => part.length > 2 && !/\d/.test(part) && !part.toLowerCase().includes('floor'));
+            if (validPart) {
+                c = validPart;
+            } else {
+                c = "Local Area";
+            }
+        } else {
+            c = "Local Area";
+        }
+    }
+    return c;
+}
+
 try {
     const items = fs.readdirSync(staticApiDir);
     items.forEach(item => {
@@ -112,7 +132,7 @@ function generateHtmlPage(city, subcategory, cityProviders) {
             <div class="founder-badge">🚀 Vision & Leadership <strong>Sandesh Koli</strong></div>
             <h1>Top Verified <span>${subcategory}</span> in ${city}</h1>
             <p>Connect instantly with trusted local professionals verified by RudraSpark.</p>
-            <a href="https://play.google.com/store/apps/details?id=com.sandeshkoli.kaamwale" class="btn" style="background: #1a73e8; color: #fff;">📲 Download RudraSpark App</a>
+            <a href="${playStoreUrl}" class="btn" style="background: #1a73e8; color: #fff;">📲 Download RudraSpark App</a>
         </div>
         <div class="hero-image"><img src="${RAW_IMAGE_URL}" alt="Sandesh Koli"></div>
     </div>
@@ -122,7 +142,7 @@ function generateHtmlPage(city, subcategory, cityProviders) {
         <div class="cta-banner">
             <h2 style="margin: 0 0 10px 0; color: #fff; font-size: 26px;">Explore All 3.5 Lakh+ Experts on RudraSpark</h2>
             <p style="margin: 0 0 20px 0; color: #e0f2fe; font-size: 15px;">Data verified across 16+ states on RudraSpark.</p>
-            <a href="https://play.google.com/store/apps/details?id=com.sandeshkoli.kaamwale" class="btn">📲 Download RudraSpark App</a>
+            <a href="${playStoreUrl}" class="btn">📲 Download RudraSpark App</a>
         </div>
     </div>
     <div class="category-section"><h3>Explore Popular Categories & Rentals</h3><div class="category-scroll">${catHtml}</div></div>
@@ -132,7 +152,7 @@ function generateHtmlPage(city, subcategory, cityProviders) {
 }
 
 function buildStaticSeo() {
-    console.log("🚀 Building Static Pre-rendered pSEO Landing Pages...");
+    console.log("🚀 Building Static Pre-rendered pSEO Landing Pages with Clean Cities...");
 
     const indexHtml = `<!DOCTYPE html>
 <html lang="en">
@@ -177,9 +197,9 @@ function buildStaticSeo() {
 
     const grouped = {};
     allProviders.forEach(p => {
-        const city = p.city || p.locality || "India";
+        const city = getCleanCity(p);
         const subcategory = p.subcategory || p.primaryCategoryId || "General Service";
-        if (!city || !subcategory) return;
+        if (!city || !subcategory || city.toLowerCase() === 'local area') return;
         const key = `${city}_${subcategory}`.toLowerCase().replace(/[^a-z0-9]/g, '-');
         if (!grouped[key]) {
             grouped[key] = { city, subcategory, items: [] };
@@ -192,7 +212,7 @@ function buildStaticSeo() {
     const sitemapUrls = [`<url><loc>${DOMAIN}/</loc><changefreq>daily</changefreq><priority>1.0</priority></url>`];
 
     let count = 0;
-    const keys = Object.keys(grouped).slice(0, 1500); // 1500 top pages for lightning fast Vercel build
+    const keys = Object.keys(grouped).slice(0, 1500);
     keys.forEach(key => {
         const group = grouped[key];
         const fileName = `${key}.html`;
@@ -208,7 +228,7 @@ ${sitemapUrls.join('\n')}
 </urlset>`;
 
     fs.writeFileSync(path.join(OUTPUT_DIR, 'sitemap.xml'), sitemapContent);
-    console.log(`\n🎉 Success! Pre-rendered ${count} static SEO landing pages and sitemap.xml!`);
+    console.log(`\n🎉 Success! Pre-rendered ${count} clean static SEO landing pages and sitemap.xml!`);
 }
 
 buildStaticSeo();
