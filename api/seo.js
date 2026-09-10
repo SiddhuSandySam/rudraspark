@@ -120,32 +120,75 @@ module.exports = (req, res) => {
     <meta name="description" content="Find trusted ${subcategory} in ${city} on RudraSpark. Founded by Sandesh Koli.">
     ${GOOGLE_VERIFICATION}
     <style>
+        * { box-sizing: border-box; }
         body { font-family: system-ui, sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 0; line-height: 1.6; }
-        .navbar { background: #1e293b; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; }
+        .navbar { background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(10px); padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.08); position: sticky; top: 0; z-index: 100; }
+        .logo { font-size: 20px; font-weight: 800; color: #fff; text-decoration: none; display: flex; align-items: center; gap: 10px; }
+        .logo span { color: #38bdf8; }
+
         .hero { max-width: 1200px; margin: 0 auto; padding: 50px 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 40px; }
         .hero-content { flex: 1; min-width: 300px; }
-        .hero-image img { width: 380px; border-radius: 24px; box-shadow: 0 20px 50px rgba(26,115,232,0.3); }
-        h1 { font-size: 38px; font-weight: 800; color: #fff; }
+        .hero-image { flex: 1; min-width: 300px; text-align: center; }
+        .hero-image img { max-width: 100%; width: 380px; border-radius: 24px; box-shadow: 0 20px 50px rgba(26,115,232,0.3); border: 2px solid rgba(26,115,232,0.4); }
+        h1 { font-size: 38px; font-weight: 800; margin-bottom: 20px; color: #fff; letter-spacing: -1px; }
+        h1 span { color: #38bdf8; }
+        p { font-size: 16px; color: #94a3b8; margin-bottom: 25px; }
+        .stats { display: flex; gap: 20px; margin-bottom: 30px; }
+        .stat-item h3 { font-size: 24px; color: #f8fafc; margin: 0; font-weight: 800; }
+        .stat-item p { font-size: 13px; margin: 0; color: #64748b; }
+        .stat-item { background: rgba(255,255,255,0.03); padding: 12px 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); }
+
         .container { max-width: 900px; margin: 0 auto; padding: 20px; }
-        .btn { display: inline-block; background: #1a73e8; color: #fff; padding: 16px 36px; border-radius: 30px; text-decoration: none; font-weight: bold; }
-        footer { text-align: center; padding: 40px; color: #64748b; }
+        .cta-banner { background: linear-gradient(135deg, #1a73e8, #0284c7); border-radius: 20px; padding: 40px; text-align: center; box-shadow: 0 15px 40px rgba(26,115,232,0.4); margin-top: 50px; }
+        .btn { display: inline-block; background: #fff; color: #0f172a; padding: 16px 36px; border-radius: 30px; text-decoration: none; font-weight: bold; font-size: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+        .founder-badge { display: inline-flex; align-items: center; background: rgba(255,255,255,0.05); padding: 8px 16px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 15px; font-size: 14px; color: #cbd5e1; }
+        .founder-badge strong { color: #38bdf8; margin-left: 6px; }
+
+        .category-section { max-width: 1200px; margin: 60px auto 40px auto; padding: 0 20px; text-align: center; }
+        .category-section h3 { font-size: 24px; color: #fff; margin-bottom: 25px; font-weight: 800; }
+        .category-scroll { display: flex; gap: 20px; overflow-x: auto; padding: 15px 5px; scrollbar-width: thin; scrollbar-color: #1a73e8 #1e293b; }
+
+        footer { text-align: center; padding: 40px; color: #64748b; border-top: 1px solid rgba(255,255,255,0.05); margin-top: 60px; font-size: 14px; }
     </style>
 </head>
 <body>
-    <div class="navbar"><a href="/" style="color:#fff;text-decoration:none;font-weight:bold;">🛠️ RudraSpark</a><span>Founder: <strong>Sandesh Koli</strong></span></div>
+    <div class="navbar">
+        <a href="/" style="color:#fff;text-decoration:none;font-weight:bold;">🛠️ RudraSpark</a>
+        <span style="font-size: 13px; color: #94a3b8;">Founder: <strong>Sandesh Koli</strong></span>
+    </div>
+
+    <!-- Hero Section with Founder Portrait on Every Page -->
     <div class="hero">
         <div class="hero-content">
+            <div class="founder-badge">🚀 Vision & Leadership <strong>Sandesh Koli</strong></div>
             <h1>Top Verified <span>${subcategory}</span> in ${city}</h1>
-            <p>Connect instantly with trusted local professionals verified by RudraSpark.</p>
-            <a href="https://play.google.com/store/apps/details?id=com.sandeshkoli.kaamwale" class="btn">📲 Download RudraSpark App</a>
+            <p>Directly connect with trusted local professionals verified by RudraSpark across India.</p>
+            <div class="stats">
+                <div class="stat-item"><h3>3.5L+</h3><p>Verified Pros</p></div>
+                <div class="stat-item"><h3>16+</h3><p>States</p></div>
+                <div class="stat-item"><h3>100%</h3><p>Direct Connect</p></div>
+            </div>
+            <a href="https://play.google.com/store/apps/details?id=com.sandeshkoli.kaamwale" class="btn" style="background: #1a73e8; color: #fff;">📲 Download RudraSpark App</a>
         </div>
         <div class="hero-image"><img src="${RAW_IMAGE_URL}" alt="Sandesh Koli"></div>
     </div>
+
     <div class="container">
-        <h2>Available ${subcategory} Professionals in ${city}</h2>
-        ${providerCardsHtml}
+        <h2 style="color: #f8fafc; margin-bottom: 20px; font-size: 24px;">Available ${subcategory} Professionals in ${city}</h2>
+        <div>${providerCardsHtml}</div>
+        <div class="cta-banner">
+            <h2 style="margin: 0 0 10px 0; color: #fff; font-size: 26px;">Explore All 3.5 Lakh+ Experts on RudraSpark</h2>
+            <p style="margin: 0 0 20px 0; color: #e0f2fe; font-size: 15px;">Download our Android app today for instant bookings, rentals, and local services.</p>
+            <a href="https://play.google.com/store/apps/details?id=com.sandeshkoli.kaamwale" class="btn">📲 Download RudraSpark App</a>
+        </div>
     </div>
-    <footer><p>&copy; ${new Date().getFullYear()} RudraSpark. Founded by <strong>Sandesh Koli</strong>.</p></footer>
+
+    <div class="category-section">
+        <h3>Explore Popular Categories & Rentals</h3>
+        <div class="category-scroll">${catHtml}</div>
+    </div>
+
+    <footer><p>&copy; ${new Date().getFullYear()} RudraSpark. Founded by <strong>Sandesh Koli</strong>. All rights reserved.</p></footer>
 </body>
 </html>`;
         res.setHeader('Content-Type', 'text/html');
