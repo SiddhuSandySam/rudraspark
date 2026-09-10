@@ -1,40 +1,19 @@
-const https = require('https');
+const fs = require('fs');
+const path = require('path');
 
 const RAW_IMAGE_URL = "https://raw.githubusercontent.com/SiddhuSandySam/kaamwaleasset/main/Sandeshkoli.png";
 const GOOGLE_VERIFICATION = '<meta name="google-site-verification" content="ueLjOKjISiD5rlHrSK510SAvXnyHheDauLQ_6yvlLW8" />';
 const DOMAIN = "https://rudraspark.vercel.app";
 
-function fetchRemoteJson(url) {
-    return new Promise((resolve) => {
-        https.get(url, { headers: { 'User-Agent': 'RudraSpark-SEO-Engine' } }, (res) => {
-            if (res.statusCode !== 200) {
-                resolve([]);
-                return;
-            }
-            let data = '';
-            res.on('data', chunk => data += chunk);
-            res.on('end', () => {
-                try {
-                    resolve(JSON.parse(data));
-                } catch (e) {
-                    resolve([]);
-                }
-            });
-        }).on('error', () => resolve([]));
-    });
-}
-
-function getGridFolderForCity(city) {
-    const c = city.toLowerCase();
-    if (['pune', 'mumbai', 'nagpur', 'nashik', 'thane', 'aurangabad', 'kolhapur', 'solapur'].some(x => c.includes(x))) return 'maharashtra_grids';
-    if (['ahmedabad', 'surat', 'vadodara', 'rajkot'].some(x => c.includes(x))) return 'gujarat_grids';
-    if (['bengaluru', 'bangalore', 'mysuru', 'hubli'].some(x => c.includes(x))) return 'karnataka_grids';
-    if (['hyderabad', 'visakhapatnam', 'vijayawada'].some(x => c.includes(x))) return 'andhra_pradesh_grids';
-    if (['patna', 'gaya', 'bhagalpur', 'muzaffarpur'].some(x => c.includes(x))) return 'bihar_grids';
-    if (['guwahati', 'silchar', 'dibrugarh'].some(x => c.includes(x))) return 'assam_grids';
-    if (['kochi', 'thiruvananthapuram', 'kozhikode'].some(x => c.includes(x))) return 'kerala_grids';
-    return 'maharashtra_grids';
-}
+// 🚀 LOAD LOCAL LIGHTWEIGHT PROVIDERS JSON (7,382 verified pros, ~19MB, 0 network latency!)
+const registryPath = path.join(__dirname, '..', 'providers.json');
+let allProviders = [];
+try {
+    if (fs.existsSync(registryPath)) {
+        const regData = JSON.parse(fs.readFileSync(registryPath, 'utf8'));
+        allProviders = Array.isArray(regData) ? regData : Object.values(regData);
+    }
+} catch (e) {}
 
 const categoriesBar = [
     { name: "Rental", icon: "https://raw.githubusercontent.com/SiddhuSandySam/kaamwaleasset/main/cat_rental.png" },
@@ -119,18 +98,6 @@ module.exports = async (req, res) => {
     if (parts.length >= 2 && !/^\d/.test(parts[0])) {
         const city = parts[0].charAt(0).toUpperCase() + parts[0].slice(1);
         const subcategory = parts.slice(1).join(' ').replace(/\b\w/g, l => l.toUpperCase());
-
-        const folder = getGridFolderForCity(city);
-        const sampleGrids = ['g_190_730.json', 'g_189_730.json', 'g_187_728.json', 'g_191_728.json', 'g_189_729.json', 'g_380_140.json', 'g_250_450.json'];
-
-        let allProviders = [];
-        for (const gridFile of sampleGrids) {
-            const gridUrl = `https://cdn.jsdelivr.net/gh/SiddhuSandySam/rudraspark@main/${folder}/${gridFile}`;
-            const gridData = await fetchRemoteJson(gridUrl);
-            if (gridData && Array.isArray(gridData)) {
-                allProviders.push(...gridData);
-            }
-        }
 
         const matched = allProviders.filter(p => {
             const pCity = (p.city || p.locality || "").toLowerCase();
