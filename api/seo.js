@@ -1,18 +1,41 @@
-const fs = require('fs');
-const path = require('path');
+const https = require('https');
 
 const RAW_IMAGE_URL = "https://raw.githubusercontent.com/SiddhuSandySam/kaamwaleasset/main/Sandeshkoli.png";
 const GOOGLE_VERIFICATION = '<meta name="google-site-verification" content="ueLjOKjISiD5rlHrSK510SAvXnyHheDauLQ_6yvlLW8" />';
 
-// Load top providers master json from root
-const registryPath = path.join(__dirname, '..', 'top_providers.json');
-let allProviders = [];
-try {
-    if (fs.existsSync(registryPath)) {
-        const regData = JSON.parse(fs.readFileSync(registryPath, 'utf8'));
-        allProviders = Array.isArray(regData) ? regData : Object.values(regData);
-    }
-} catch (e) {}
+// Helper to fetch JSON from kaawmale-data GitHub repo dynamically over HTTPS
+function fetchRemoteJson(url) {
+    return new Promise((resolve) => {
+        https.get(url, { headers: { 'User-Agent': 'RudraSpark-SEO-Engine' } }, (res) => {
+            if (res.statusCode !== 200) {
+                resolve(null);
+                return;
+            }
+            let data = '';
+            res.on('data', chunk => data += chunk);
+            res.on('end', () => {
+                try {
+                    resolve(JSON.parse(data));
+                } catch (e) {
+                    resolve(null);
+                }
+            });
+        }).on('error', () => resolve(null));
+    });
+}
+
+// Map common Indian cities to their respective state grid folders in kaamwale-data
+function getGridFolderForCity(city) {
+    const c = city.toLowerCase();
+    if (['pune', 'mumbai', 'nagpur', 'nashik', 'thane', 'aurangabad', 'kolhapur', 'solapur'].some(x => c.includes(x))) return 'maharashtra_grids';
+    if (['ahmedabad', 'surat', 'vadodara', 'rajkot'].some(x => c.includes(x))) return 'gujarat_grids';
+    if (['bengaluru', 'bangalore', 'mysuru', 'hubli'].some(x => c.includes(x))) return 'karnataka_grids';
+    if (['hyderabad', 'visakhapatnam', 'vijayawada'].some(x => c.includes(x))) return 'andhra_pradesh_grids';
+    if (['patna', 'gaya', 'bhagalpur', 'muzaffarpur'].some(x => c.includes(x))) return 'bihar_grids';
+    if (['guwahati', 'silchar', 'dibrugarh'].some(x => c.includes(x))) return 'assam_grids';
+    if (['kochi', 'thiruvananthapuram', 'kozhikode'].some(x => c.includes(x))) return 'kerala_grids';
+    return 'maharashtra_grids'; // Default fallback
+}
 
 const categoriesBar = [
     { name: "Rental", icon: "https://raw.githubusercontent.com/SiddhuSandySam/kaamwaleasset/main/cat_rental.png" },
@@ -34,7 +57,7 @@ const catHtml = categoriesBar.map(c => `
     </div>
 `).join('');
 
-module.exports = (req, res) => {
+module.exports = async (req, res) => {
     const urlPath = req.url.split('?')[0];
 
     if (urlPath === '/' || urlPath === '/index.html') {
@@ -92,10 +115,23 @@ module.exports = (req, res) => {
         const city = parts[0].charAt(0).toUpperCase() + parts[0].slice(1);
         const subcategory = parts.slice(1).join(' ').replace(/\b\w/g, l => l.toUpperCase());
 
+        // 🚀 DYNAMICALLY FETCH REAL GRID FILES FROM kaamwale-data REPO ON GITHUB
+        const folder = getGridFolderForCity(city);
+        const sampleGrids = ['g_190_730.json', 'g_189_730.json', 'g_187_728.json', 'g_191_728.json', 'g_189_729.json'];
+
+        let allProviders = [];
+        for (const gridFile of sampleGrids) {
+            const gridUrl = `https://raw.githubusercontent.com/SiddhuSandySam/kaamwale-data/main/${folder}/${gridFile}`;
+            const gridData = await fetchRemoteJson(gridUrl);
+            if (gridData && Array.isArray(gridData)) {
+                allProviders.push(...gridData);
+            }
+        }
+
         const matched = allProviders.filter(p => {
             const pCity = (p.city || p.locality || "").toLowerCase();
             const pSub = (p.subcategory || p.primaryCategoryId || "").toLowerCase();
-            return pCity.includes(city.toLowerCase()) && pSub.includes(subcategory.toLowerCase());
+            return pCity.includes(city.toLowerCase()) || pSub.includes(subcategory.toLowerCase());
         }).slice(0, 15);
 
         let providerCardsHtml = matched.length > 0 ? matched.map(p => `
