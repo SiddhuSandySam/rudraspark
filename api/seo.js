@@ -3,7 +3,6 @@ const https = require('https');
 const RAW_IMAGE_URL = "https://raw.githubusercontent.com/SiddhuSandySam/kaamwaleasset/main/Sandeshkoli.png";
 const GOOGLE_VERIFICATION = '<meta name="google-site-verification" content="ueLjOKjISiD5rlHrSK510SAvXnyHheDauLQ_6yvlLW8" />';
 
-// Helper to fetch JSON from kaamwale-data using lightning-fast jsDelivr CDN
 function fetchRemoteJson(url) {
     return new Promise((resolve) => {
         https.get(url, { headers: { 'User-Agent': 'RudraSpark-SEO-Engine' } }, (res) => {
@@ -56,13 +55,8 @@ const catHtml = categoriesBar.map(c => `
     </div>
 `).join('');
 
-module.exports = async (req, res) => {
-    const urlPath = req.url.split('?')[0];
-
-    res.setHeader('Cache-Control', 'public, s-maxage=86400, stale-while-revalidate=604800');
-
-    if (urlPath === '/' || urlPath === '/index.html') {
-        const homeHtml = `<!DOCTYPE html>
+function renderHomePage() {
+    return `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -105,18 +99,25 @@ module.exports = async (req, res) => {
     <footer><p>&copy; ${new Date().getFullYear()} RudraSpark. Founded by <strong>Sandesh Koli</strong>. All rights reserved.</p></footer>
 </body>
 </html>`;
+}
+
+module.exports = async (req, res) => {
+    const urlPath = req.url.split('?')[0];
+
+    res.setHeader('Cache-Control', 'public, s-maxage=86400, stale-while-revalidate=604800');
+
+    if (urlPath === '/' || urlPath === '/index.html') {
         res.setHeader('Content-Type', 'text/html');
-        return res.status(200).send(homeHtml);
+        return res.status(200).send(renderHomePage());
     }
 
     const cleanPath = urlPath.replace('.html', '').replace('/', '');
     const parts = cleanPath.split('-');
 
-    if (parts.length >= 2) {
+    if (parts.length >= 2 && !/^\d/.test(parts[0])) {
         const city = parts[0].charAt(0).toUpperCase() + parts[0].slice(1);
         const subcategory = parts.slice(1).join(' ').replace(/\b\w/g, l => l.toUpperCase());
 
-        // 🚀 FETCH GRIDS FROM kaamwale-data VIA LIGHTNING-FAST jsDelivr CDN
         const folder = getGridFolderForCity(city);
         const sampleGrids = ['g_190_730.json', 'g_189_730.json', 'g_187_728.json', 'g_191_728.json', 'g_189_729.json', 'g_380_140.json', 'g_250_450.json'];
 
@@ -199,8 +200,7 @@ module.exports = async (req, res) => {
             <h1>Top Verified <span>${subcategory}</span> in ${city}</h1>
             <p>Connect instantly with trusted local professionals verified by RudraSpark.</p>
             <div class="stats">
-                <div class="stat-item"><h3>3.5L+</h3><p>Verified Pros</p>
-            </div>
+                <div class="stat-item"><h3>3.5L+</h3><p>Verified Pros</p></div>
                 <div class="stat-item"><h3>16+</h3><p>States</p></div>
                 <div class="stat-item"><h3>100%</h3><p>Direct Connect</p></div>
             </div>
@@ -225,5 +225,7 @@ module.exports = async (req, res) => {
         return res.status(200).send(pageHtml);
     }
 
-    res.status(404).send('Page not found');
+    // 🚀 FALLBACK: Instead of 404, gracefully render the gorgeous home page!
+    res.setHeader('Content-Type', 'text/html');
+    return res.status(200).send(renderHomePage());
 };
