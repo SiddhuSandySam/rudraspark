@@ -4,14 +4,28 @@ const path = require('path');
 const RAW_IMAGE_URL = "https://raw.githubusercontent.com/SiddhuSandySam/kaamwaleasset/main/Sandeshkoli.png";
 const GOOGLE_VERIFICATION = '<meta name="google-site-verification" content="ueLjOKjISiD5rlHrSK510SAvXnyHheDauLQ_6yvlLW8" />';
 
-// Load providers master json
-const registryPath = path.join(__dirname, '..', 'providers_master.json');
+// 🚀 DYNAMIC GRID SCANNER: Read lightweight state grid files (*_grids/*.json) on the fly
+const projectRoot = path.join(__dirname, '..');
 let allProviders = [];
+
 try {
-    if (fs.existsSync(registryPath)) {
-        const regData = JSON.parse(fs.readFileSync(registryPath, 'utf8'));
-        allProviders = Array.isArray(regData) ? regData : Object.values(regData);
-    }
+    const items = fs.readdirSync(projectRoot);
+    items.forEach(item => {
+        if (item.endsWith('_grids')) {
+            const gridDirPath = path.join(projectRoot, item);
+            if (fs.statSync(gridDirPath).isDirectory()) {
+                const gridFiles = fs.readdirSync(gridDirPath).filter(f => f.endsWith('.json'));
+                gridFiles.slice(0, 15).forEach(gf => {
+                    try {
+                        const gridData = JSON.parse(fs.readFileSync(path.join(gridDirPath, gf), 'utf8'));
+                        if (Array.isArray(gridData)) {
+                            allProviders.push(...gridData);
+                        }
+                    } catch (err) {}
+                });
+            }
+        }
+    });
 } catch (e) {}
 
 const categoriesBar = [
@@ -176,7 +190,8 @@ module.exports = (req, res) => {
             <a href="https://play.google.com/store/apps/details?id=com.sandeshkoli.kaamwale" class="btn">📲 Download RudraSpark App</a>
         </div>
     </div>
-    <footer><p>&copy; ${new Date().getFullYear()} RudraSpark. Founded by <strong>Sandesh Koli</strong>. All rights reserved.</p></footer>
+    <footer><p>&copy; ${new Date().getFullYear()} RudraSpark. Founded by <strong>Sandesh Koli</strong>. All rights reserved.</p>
+    </footer>
 </body>
 </html>`;
         res.setHeader('Content-Type', 'text/html');
