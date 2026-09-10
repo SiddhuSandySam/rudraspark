@@ -1,4 +1,6 @@
 {
-  "buildCommand": "node generate_seo_static.js",
-  "outputDirectory": "public"
+  "version": 2,
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/api/seo" }
+  ]
 }
