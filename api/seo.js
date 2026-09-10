@@ -2,6 +2,7 @@ const https = require('https');
 
 const RAW_IMAGE_URL = "https://raw.githubusercontent.com/SiddhuSandySam/kaamwaleasset/main/Sandeshkoli.png";
 const GOOGLE_VERIFICATION = '<meta name="google-site-verification" content="ueLjOKjISiD5rlHrSK510SAvXnyHheDauLQ_6yvlLW8" />';
+const DOMAIN = "https://rudraspark.vercel.app";
 
 function fetchRemoteJson(url) {
     return new Promise((resolve) => {
@@ -64,6 +65,7 @@ function renderHomePage() {
     <title>RudraSpark - India's Fastest Local Services & Rental Network</title>
     <meta name="description" content="Connect with 3.5 Lakh+ verified local professionals and rental providers across 16+ states. Founded by Sandesh Koli.">
     ${GOOGLE_VERIFICATION}
+    <link rel="canonical" href="${DOMAIN}/">
     <style>
         * { box-sizing: border-box; }
         body { font-family: system-ui, sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 0; line-height: 1.6; }
@@ -123,14 +125,13 @@ module.exports = async (req, res) => {
 
         let allProviders = [];
         for (const gridFile of sampleGrids) {
-            const gridUrl = `https://cdn.jsdelivr.net/gh/SiddhuSandySam/kaamwale-data@main/${folder}/${gridFile}`;
+            const gridUrl = `https://cdn.jsdelivr.net/gh/SiddhuSandySam/rudraspark@main/${folder}/${gridFile}`;
             const gridData = await fetchRemoteJson(gridUrl);
             if (gridData && Array.isArray(gridData)) {
                 allProviders.push(...gridData);
             }
         }
 
-        // 🚀 REMOVED LIMIT: Show ALL matching providers!
         const matched = allProviders.filter(p => {
             const pCity = (p.city || p.locality || "").toLowerCase();
             const pSub = (p.subcategory || p.primaryCategoryId || "").toLowerCase();
@@ -166,6 +167,7 @@ module.exports = async (req, res) => {
     <title>Best ${subcategory} in ${city} | Verified Local Experts - RudraSpark</title>
     <meta name="description" content="Find trusted ${subcategory} in ${city} on RudraSpark. Founded by Sandesh Koli.">
     ${GOOGLE_VERIFICATION}
+    <link rel="canonical" href="${DOMAIN}/${city.toLowerCase()}-${subcategory.toLowerCase().replace(/\s+/g, '-')}.html">
     <style>
         * { box-sizing: border-box; }
         body { font-family: system-ui, sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 0; line-height: 1.6; }
