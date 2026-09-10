@@ -7,7 +7,7 @@ function fetchRemoteJson(url) {
     return new Promise((resolve) => {
         https.get(url, { headers: { 'User-Agent': 'RudraSpark-SEO-Engine' } }, (res) => {
             if (res.statusCode !== 200) {
-                resolve(null);
+                resolve([]);
                 return;
             }
             let data = '';
@@ -16,10 +16,10 @@ function fetchRemoteJson(url) {
                 try {
                     resolve(JSON.parse(data));
                 } catch (e) {
-                    resolve(null);
+                    resolve([]);
                 }
             });
-        }).on('error', () => resolve(null));
+        }).on('error', () => resolve([]));
     });
 }
 
@@ -130,12 +130,13 @@ module.exports = async (req, res) => {
             }
         }
 
+        // 🚀 REMOVED LIMIT: Show ALL matching providers!
         const matched = allProviders.filter(p => {
             const pCity = (p.city || p.locality || "").toLowerCase();
             const pSub = (p.subcategory || p.primaryCategoryId || "").toLowerCase();
             const pAddr = (p.fullAddress || "").toLowerCase();
             return pCity.includes(city.toLowerCase()) || pAddr.includes(city.toLowerCase()) || pSub.includes(subcategory.toLowerCase());
-        }).slice(0, 15);
+        });
 
         let providerCardsHtml = matched.length > 0 ? matched.map(p => `
             <div style="background: white; border-radius: 16px; padding: 24px; margin-bottom: 18px; box-shadow: 0 8px 25px rgba(0,0,0,0.08); display: flex; align-items: center; justify-content: space-between; border: 1px solid #e2e8f0; gap: 20px;">
@@ -225,7 +226,6 @@ module.exports = async (req, res) => {
         return res.status(200).send(pageHtml);
     }
 
-    // 🚀 FALLBACK: Instead of 404, gracefully render the gorgeous home page!
     res.setHeader('Content-Type', 'text/html');
     return res.status(200).send(renderHomePage());
 };
