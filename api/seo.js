@@ -4,8 +4,8 @@ const path = require('path');
 const RAW_IMAGE_URL = "https://raw.githubusercontent.com/SiddhuSandySam/kaamwaleasset/main/Sandeshkoli.png";
 const GOOGLE_VERIFICATION = '<meta name="google-site-verification" content="ueLjOKjISiD5rlHrSK510SAvXnyHheDauLQ_6yvlLW8" />';
 
-// Load master registry from root
-const registryPath = path.join(__dirname, '..', 'master_registry.json');
+// Load providers master json
+const registryPath = path.join(__dirname, '..', 'providers_master.json');
 let allProviders = [];
 try {
     if (fs.existsSync(registryPath)) {
@@ -152,17 +152,12 @@ module.exports = (req, res) => {
     </style>
 </head>
 <body>
-    <div class="navbar">
-        <a href="/" style="color:#fff;text-decoration:none;font-weight:bold;">🛠️ RudraSpark</a>
-        <span style="font-size: 13px; color: #94a3b8;">Founder: <strong>Sandesh Koli</strong></span>
-    </div>
-
-    <!-- Hero Section with Founder Portrait on Every Page -->
+    <div class="navbar"><a href="/" style="color:#fff;text-decoration:none;font-weight:bold;">🛠️ RudraSpark</a><span>Founder: <strong>Sandesh Koli</strong></span></div>
     <div class="hero">
         <div class="hero-content">
             <div class="founder-badge">🚀 Vision & Leadership <strong>Sandesh Koli</strong></div>
             <h1>Top Verified <span>${subcategory}</span> in ${city}</h1>
-            <p>Directly connect with trusted local professionals verified by RudraSpark across India.</p>
+            <p>Connect instantly with trusted local professionals verified by RudraSpark.</p>
             <div class="stats">
                 <div class="stat-item"><h3>3.5L+</h3><p>Verified Pros</p></div>
                 <div class="stat-item"><h3>16+</h3><p>States</p></div>
@@ -172,22 +167,15 @@ module.exports = (req, res) => {
         </div>
         <div class="hero-image"><img src="${RAW_IMAGE_URL}" alt="Sandesh Koli"></div>
     </div>
-
     <div class="container">
         <h2 style="color: #f8fafc; margin-bottom: 20px; font-size: 24px;">Available ${subcategory} Professionals in ${city}</h2>
         <div>${providerCardsHtml}</div>
         <div class="cta-banner">
             <h2 style="margin: 0 0 10px 0; color: #fff; font-size: 26px;">Explore All 3.5 Lakh+ Experts on RudraSpark</h2>
-            <p style="margin: 0 0 20px 0; color: #e0f2fe; font-size: 15px;">Download our Android app today for instant bookings, rentals, and local services.</p>
+            <p style="margin: 0 0 20px 0; color: #e0f2fe; font-size: 15px;">Data verified across 16+ states on RudraSpark.</p>
             <a href="https://play.google.com/store/apps/details?id=com.sandeshkoli.kaamwale" class="btn">📲 Download RudraSpark App</a>
         </div>
     </div>
-
-    <div class="category-section">
-        <h3>Explore Popular Categories & Rentals</h3>
-        <div class="category-scroll">${catHtml}</div>
-    </div>
-
     <footer><p>&copy; ${new Date().getFullYear()} RudraSpark. Founded by <strong>Sandesh Koli</strong>. All rights reserved.</p></footer>
 </body>
 </html>`;
