@@ -3,7 +3,7 @@ const https = require('https');
 const RAW_IMAGE_URL = "https://raw.githubusercontent.com/SiddhuSandySam/kaamwaleasset/main/Sandeshkoli.png";
 const GOOGLE_VERIFICATION = '<meta name="google-site-verification" content="ueLjOKjISiD5rlHrSK510SAvXnyHheDauLQ_6yvlLW8" />';
 
-// Helper to fetch JSON from kaawmale-data GitHub repo dynamically over HTTPS
+// Helper to fetch JSON from kaamwale-data GitHub repo dynamically over HTTPS with caching
 function fetchRemoteJson(url) {
     return new Promise((resolve) => {
         https.get(url, { headers: { 'User-Agent': 'RudraSpark-SEO-Engine' } }, (res) => {
@@ -24,7 +24,7 @@ function fetchRemoteJson(url) {
     });
 }
 
-// Map common Indian cities to their respective state grid folders in kaamwale-data
+// Map city to state grid folder in kaamwale-data
 function getGridFolderForCity(city) {
     const c = city.toLowerCase();
     if (['pune', 'mumbai', 'nagpur', 'nashik', 'thane', 'aurangabad', 'kolhapur', 'solapur'].some(x => c.includes(x))) return 'maharashtra_grids';
@@ -34,7 +34,7 @@ function getGridFolderForCity(city) {
     if (['patna', 'gaya', 'bhagalpur', 'muzaffarpur'].some(x => c.includes(x))) return 'bihar_grids';
     if (['guwahati', 'silchar', 'dibrugarh'].some(x => c.includes(x))) return 'assam_grids';
     if (['kochi', 'thiruvananthapuram', 'kozhikode'].some(x => c.includes(x))) return 'kerala_grids';
-    return 'maharashtra_grids'; // Default fallback
+    return 'maharashtra_grids';
 }
 
 const categoriesBar = [
@@ -59,6 +59,9 @@ const catHtml = categoriesBar.map(c => `
 
 module.exports = async (req, res) => {
     const urlPath = req.url.split('?')[0];
+
+    // Enable Vercel Edge Caching (Cache for 24 hours, stale while revalidate for 7 days)
+    res.setHeader('Cache-Control', 'public, s-maxage=86400, stale-while-revalidate=604800');
 
     if (urlPath === '/' || urlPath === '/index.html') {
         const homeHtml = `<!DOCTYPE html>
@@ -101,7 +104,7 @@ module.exports = async (req, res) => {
         <h3>Explore Popular Categories & Rentals</h3>
         <div class="category-scroll">${catHtml}</div>
     </div>
-    <footer><p>&copy; ${new Date().getFullYear()} RudraSpark. Founded by <strong>Sandesh Koli</strong>.</p></footer>
+    <footer><p>&copy; ${new Date().getFullYear()} RudraSpark. Founded by <strong>Sandesh Koli</strong>. All rights reserved.</p></footer>
 </body>
 </html>`;
         res.setHeader('Content-Type', 'text/html');
@@ -117,7 +120,7 @@ module.exports = async (req, res) => {
 
         // 🚀 DYNAMICALLY FETCH REAL GRID FILES FROM kaamwale-data REPO ON GITHUB
         const folder = getGridFolderForCity(city);
-        const sampleGrids = ['g_190_730.json', 'g_189_730.json', 'g_187_728.json', 'g_191_728.json', 'g_189_729.json'];
+        const sampleGrids = ['g_190_730.json', 'g_189_730.json', 'g_187_728.json', 'g_191_728.json', 'g_189_729.json', 'g_380_140.json', 'g_250_450.json'];
 
         let allProviders = [];
         for (const gridFile of sampleGrids) {
@@ -131,20 +134,28 @@ module.exports = async (req, res) => {
         const matched = allProviders.filter(p => {
             const pCity = (p.city || p.locality || "").toLowerCase();
             const pSub = (p.subcategory || p.primaryCategoryId || "").toLowerCase();
-            return pCity.includes(city.toLowerCase()) || pSub.includes(subcategory.toLowerCase());
+            const pAddr = (p.fullAddress || "").toLowerCase();
+            return pCity.includes(city.toLowerCase()) || pAddr.includes(city.toLowerCase()) || pSub.includes(subcategory.toLowerCase());
         }).slice(0, 15);
 
         let providerCardsHtml = matched.length > 0 ? matched.map(p => `
             <div style="background: white; border-radius: 16px; padding: 24px; margin-bottom: 18px; box-shadow: 0 8px 25px rgba(0,0,0,0.08); display: flex; align-items: center; justify-content: space-between; border: 1px solid #e2e8f0; gap: 20px;">
                 <div style="display: flex; align-items: center; gap: 16px; flex: 1;">
-                    <div style="width: 60px; height: 60px; border-radius: 50%; background: #e0f2fe; color: #1a73e8; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 22px; flex-shrink: 0;">🛠️</div>
+                    ${p.profilePhotoUrl ? `<img src="${p.profilePhotoUrl}" alt="${p.businessName || 'Provider'}" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid #1a73e8; flex-shrink: 0;">` : `<div style="width: 60px; height: 60px; border-radius: 50%; background: #e0f2fe; color: #1a73e8; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 22px; flex-shrink: 0;">🛠️</div>`}
                     <div>
                         <h3 style="margin: 0 0 6px 0; color: #1e293b; font-size: 18px;">${p.businessName || p.name || 'Verified Professional'}</h3>
                         <p style="margin: 0 0 4px 0; color: #64748b; font-size: 14px;">📍 ${p.fullAddress || p.locality || p.city || city}</p>
-                        <p style="margin: 0; color: #d97706; font-weight: bold; font-size: 13px;">⭐ ${p.rating ? Number(p.rating).toFixed(1) : '4.5'} / 5.0 Verified Expert</p>
+                        <div style="display: flex; gap: 12px; font-size: 13px; color: #475569; font-weight: 600; flex-wrap: wrap;">
+                            <span style="color: #d97706;">⭐ ${p.rating ? Number(p.rating).toFixed(1) : '4.5'} / 5.0</span>
+                            ${p.experienceYears ? `<span>🏆 ${p.experienceYears} Yrs Exp</span>` : ''}
+                            ${p.startingPrice ? `<span>💰 ₹${p.startingPrice} ${p.priceUnit || ''}</span>` : ''}
+                        </div>
                     </div>
                 </div>
-                <a href="tel:${p.callNumber || p.whatsappNumber || ''}" style="background: #1a73e8; color: white; padding: 10px 22px; border-radius: 25px; text-decoration: none; font-weight: bold; font-size: 14px;">📞 Call</a>
+                <div style="display: flex; flex-direction: column; gap: 8px; flex-shrink: 0;">
+                    <a href="tel:${p.callNumber || p.whatsappNumber || ''}" style="background: #1a73e8; color: white; padding: 10px 22px; border-radius: 25px; text-decoration: none; font-weight: bold; font-size: 14px; text-align: center;">📞 Call</a>
+                    ${p.whatsappNumber ? `<a href="https://wa.me/91${String(p.whatsappNumber).replace(/[^0-9]/g, '')}" target="_blank" style="background: #25d366; color: white; padding: 8px 22px; border-radius: 25px; text-decoration: none; font-weight: bold; font-size: 13px; text-align: center;">💬 WhatsApp</a>` : ''}
+                </div>
             </div>
         `).join('') : `<p style="color: #94a3b8; text-align: center; padding: 30px;">Explore all verified ${subcategory} experts in ${city} on the RudraSpark App!</p>`;
 
@@ -161,7 +172,6 @@ module.exports = async (req, res) => {
         .navbar { background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(10px); padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.08); position: sticky; top: 0; z-index: 100; }
         .logo { font-size: 20px; font-weight: 800; color: #fff; text-decoration: none; display: flex; align-items: center; gap: 10px; }
         .logo span { color: #38bdf8; }
-
         .hero { max-width: 1200px; margin: 0 auto; padding: 50px 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 40px; }
         .hero-content { flex: 1; min-width: 300px; }
         .hero-image { flex: 1; min-width: 300px; text-align: center; }
@@ -173,18 +183,14 @@ module.exports = async (req, res) => {
         .stat-item h3 { font-size: 24px; color: #f8fafc; margin: 0; font-weight: 800; }
         .stat-item p { font-size: 13px; margin: 0; color: #64748b; }
         .stat-item { background: rgba(255,255,255,0.03); padding: 12px 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); }
-
         .container { max-width: 900px; margin: 0 auto; padding: 20px; }
         .cta-banner { background: linear-gradient(135deg, #1a73e8, #0284c7); border-radius: 20px; padding: 40px; text-align: center; box-shadow: 0 15px 40px rgba(26,115,232,0.4); margin-top: 50px; }
-        .btn { display: inline-block; background: #fff; color: #0f172a; padding: 16px 36px; border-radius: 30px; text-decoration: none; font-weight: bold; font-size: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+        .btn { display: inline-block; background: #fff; color: #0f172a; padding: 16px 36px; border-radius: 30px; text-decoration: none; font-weight: bold; font-size: 16px; }
         .founder-badge { display: inline-flex; align-items: center; background: rgba(255,255,255,0.05); padding: 8px 16px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 15px; font-size: 14px; color: #cbd5e1; }
         .founder-badge strong { color: #38bdf8; margin-left: 6px; }
-
         .category-section { max-width: 1200px; margin: 60px auto 40px auto; padding: 0 20px; text-align: center; }
-        .category-section h3 { font-size: 24px; color: #fff; margin-bottom: 25px; font-weight: 800; }
-        .category-scroll { display: flex; gap: 20px; overflow-x: auto; padding: 15px 5px; scrollbar-width: thin; scrollbar-color: #1a73e8 #1e293b; }
-
-        footer { text-align: center; padding: 40px; color: #64748b; border-top: 1px solid rgba(255,255,255,0.05); margin-top: 60px; font-size: 14px; }
+        .category-scroll { display: flex; gap: 20px; overflow-x: auto; padding: 15px 5px; }
+        footer { text-align: center; padding: 40px; color: #64748b; border-top: 1px solid rgba(255,255,255,0.05); margin-top: 60px; }
     </style>
 </head>
 <body>
@@ -204,7 +210,7 @@ module.exports = async (req, res) => {
         <div class="hero-image"><img src="${RAW_IMAGE_URL}" alt="Sandesh Koli"></div>
     </div>
     <div class="container">
-        <h2 style="color: #f8fafc; margin-bottom: 20px; font-size: 24px;">Available ${subcategory} Professionals in ${city}</h2>
+        <h2>Available ${subcategory} Professionals in ${city}</h2>
         <div>${providerCardsHtml}</div>
         <div class="cta-banner">
             <h2 style="margin: 0 0 10px 0; color: #fff; font-size: 26px;">Explore All 3.5 Lakh+ Experts on RudraSpark</h2>
@@ -212,6 +218,7 @@ module.exports = async (req, res) => {
             <a href="https://play.google.com/store/apps/details?id=com.sandeshkoli.kaamwale" class="btn">📲 Download RudraSpark App</a>
         </div>
     </div>
+    <div class="category-section"><h3>Explore Popular Categories & Rentals</h3><div class="category-scroll">${catHtml}</div></div>
     <footer><p>&copy; ${new Date().getFullYear()} RudraSpark. Founded by <strong>Sandesh Koli</strong>. All rights reserved.</p></footer>
 </body>
 </html>`;
