@@ -4,8 +4,31 @@ const path = require('path');
 const RAW_IMAGE_URL = "https://raw.githubusercontent.com/SiddhuSandySam/kaamwaleasset/main/Sandeshkoli.png";
 const GOOGLE_VERIFICATION = '<meta name="google-site-verification" content="ueLjOKjISiD5rlHrSK510SAvXnyHheDauLQ_6yvlLW8" />';
 const DOMAIN = "https://rudraspark.vercel.app";
+const JSDELIVR_BASE = "https://cdn.jsdelivr.net/gh/SiddhuSandySam/kaamwale-data@main";
 
-// 🚀 LOAD LOCAL LIGHTWEIGHT PROVIDERS JSON (7,382 verified pros, ~19MB, 0 network latency!)
+const STATE_FOLDERS = [
+    "maharashtra_cities",
+    "maharashtra_districts",
+    "maharashtra_grids",
+    "bihar_grids",
+    "karnataka_grids",
+    "gujarat_grids",
+    "andhra_pradesh_grids",
+    "kerala_grids",
+    "madhya_pradesh_grids",
+    "haryana_grids",
+    "chhattisgarh_grids",
+    "jharkhand_grids",
+    "assam_grids",
+    "goa_grids",
+    "himachal_pradesh_grids",
+    "arunachal_pradesh_grids"
+];
+
+// In-memory cache for warm serverless function instances
+const cdnCache = new Map();
+
+// 🚀 LOAD LOCAL LIGHTWEIGHT PROVIDERS JSON (7,382 verified pros)
 const registryPath = path.join(__dirname, '..', 'providers.json');
 let allProviders = [];
 try {
@@ -14,6 +37,54 @@ try {
         allProviders = Array.isArray(regData) ? regData : Object.values(regData);
     }
 } catch (e) {}
+
+async function getProvidersForCity(city, subcategory) {
+    const cityLower = city.toLowerCase();
+    const subLower = subcategory.toLowerCase();
+
+    // 1. First check local bundled providers
+    let matched = allProviders.filter(p => {
+        const pCity = (p.city || p.locality || "").toLowerCase();
+        const pSub = (p.subcategory || p.primaryCategoryId || "").toLowerCase();
+        const pAddr = (p.fullAddress || "").toLowerCase();
+        return (pCity.includes(cityLower) || pAddr.includes(cityLower)) && pSub.includes(subLower);
+    });
+
+    if (matched.length > 0) {
+        return matched;
+    }
+
+    // 2. Fetch from jsDelivr CDN across state grid folders if not in local bundle
+    for (const folder of STATE_FOLDERS) {
+        const cdnUrl = `${JSDELIVR_BASE}/${folder}/${cityLower}.json`;
+        try {
+            let data;
+            if (cdnCache.has(cdnUrl)) {
+                data = cdnCache.get(cdnUrl);
+            } else {
+                const res = await fetch(cdnUrl, { headers: { 'Accept': 'application/json' } });
+                if (res.ok) {
+                    data = await res.json();
+                    if (Array.isArray(data)) {
+                        cdnCache.set(cdnUrl, data);
+                    }
+                }
+            }
+
+            if (Array.isArray(data) && data.length > 0) {
+                const filtered = data.filter(p => {
+                    const pSub = (p.subcategory || p.primaryCategoryId || "").toLowerCase();
+                    return pSub.includes(subLower);
+                });
+                return filtered.length > 0 ? filtered : data;
+            }
+        } catch (e) {
+            // Continue checking next state grid folder
+        }
+    }
+
+    return [];
+}
 
 const categoriesBar = [
     { name: "Rental", icon: "https://raw.githubusercontent.com/SiddhuSandySam/kaamwaleasset/main/cat_rental.png" },
@@ -99,12 +170,7 @@ module.exports = async (req, res) => {
         const city = parts[0].charAt(0).toUpperCase() + parts[0].slice(1);
         const subcategory = parts.slice(1).join(' ').replace(/\b\w/g, l => l.toUpperCase());
 
-        const matched = allProviders.filter(p => {
-            const pCity = (p.city || p.locality || "").toLowerCase();
-            const pSub = (p.subcategory || p.primaryCategoryId || "").toLowerCase();
-            const pAddr = (p.fullAddress || "").toLowerCase();
-            return pCity.includes(city.toLowerCase()) || pAddr.includes(city.toLowerCase()) || pSub.includes(subcategory.toLowerCase());
-        });
+        const matched = await getProvidersForCity(city, subcategory);
 
         let providerCardsHtml = matched.length > 0 ? matched.map(p => `
             <div style="background: white; border-radius: 16px; padding: 24px; margin-bottom: 18px; box-shadow: 0 8px 25px rgba(0,0,0,0.08); display: flex; align-items: center; justify-content: space-between; border: 1px solid #e2e8f0; gap: 20px;">
@@ -198,3 +264,4 @@ module.exports = async (req, res) => {
     res.setHeader('Content-Type', 'text/html');
     return res.status(200).send(renderHomePage());
 };
+
