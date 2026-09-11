@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "rewrites": [
-    { "source": "/robots.txt", "destination": "/api/robots" },
-    { "source": "/sitemap.xml", "destination": "/api/sitemap" },
-    { "source": "/(.*)", "destination": "/api/seo" }
+  "routes": [
+    { "src": "/robots.txt", "dest": "/api/robots" },
+    { "src": "/sitemap.xml", "dest": "/api/sitemap" },
+    { "src": "/(.*)", "dest": "/api/seo" }
   ]
 }

@@ -171,7 +171,7 @@ module.exports = async (req, res) => {
 
     res.setHeader('Cache-Control', 'public, s-maxage=86400, stale-while-revalidate=604800');
 
-    if (urlPath === '/sitemap.xml' || urlPath === '/sitemap') {
+    if (urlPath.includes('sitemap')) {
         const sitemapHandler = require('./sitemap.js');
         return sitemapHandler(req, res);
     }
