@@ -119,7 +119,51 @@ const catHtml = categoriesBar.map(c => `
     </div>
 `).join('');
 
+const subcategoriesPills = [
+    { name: "Plumbing", slug: "pune-plumber.html" },
+    { name: "Electrician", slug: "mumbai-electrician.html" },
+    { name: "Carpentry", slug: "thane-carpenter.html" },
+    { name: "AC Repair", slug: "delhi-ac-repair.html" },
+    { name: "Packers & Movers", slug: "navi-mumbai-packers-and-movers.html" },
+    { name: "Cleaning", slug: "bangalore-cleaning.html" },
+    { name: "Pest Control", slug: "hyderabad-pest-control.html" },
+    { name: "Waterproofing", slug: "kolkata-waterproofing.html" },
+    { name: "Laptop Repair", slug: "patna-laptop-repair.html" },
+    { name: "Car Mechanic", slug: "nagpur-car-mechanic.html" },
+    { name: "Tailoring", slug: "jaipur-tailor.html" },
+    { name: "Photographer", slug: "puducherry-photographer.html" },
+    { name: "Security Guard", slug: "surat-security-guard.html" },
+    { name: "Solar Expert", slug: "nashik-solar-expert.html" },
+    { name: "Beauty & Salon", slug: "indore-beauty-salon.html" }
+];
+
+const subCatHtml = subcategoriesPills.map(s => `
+    <a href="/${s.slug}" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(56,189,248,0.25); color: #e2e8f0; padding: 10px 22px; border-radius: 25px; text-decoration: none; font-size: 14px; font-weight: 700; white-space: nowrap; transition: all 0.2s;" onmouseover="this.style.background='rgba(56,189,248,0.18)'; this.style.borderColor='#38bdf8'; this.style.color='#fff';" onmouseout="this.style.background='rgba(255,255,255,0.04)'; this.style.borderColor='rgba(56,189,248,0.25)'; this.style.color='#e2e8f0';">🛠️ ${s.name}</a>
+`).join('');
+
 function renderHomePage() {
+    const featured = allProviders.slice(0, 5);
+    const featuredHtml = featured.map(p => `
+        <div style="background: rgba(255,255,255,0.03); border-radius: 20px; padding: 22px; border: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; margin-bottom: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.25);">
+            <div style="display: flex; align-items: center; gap: 16px; flex: 1; min-width: 260px;">
+                ${p.profilePhotoUrl ? `<img src="${p.profilePhotoUrl}" alt="${p.businessName || 'Provider'}" style="width: 62px; height: 62px; border-radius: 50%; object-fit: cover; border: 2px solid #38bdf8; flex-shrink: 0;">` : `<div style="width: 62px; height: 62px; border-radius: 50%; background: rgba(56,189,248,0.15); color: #38bdf8; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 24px; flex-shrink: 0; border: 1px solid rgba(56,189,248,0.3);">🛠️</div>`}
+                <div style="text-align: left;">
+                    <h3 style="margin: 0 0 6px 0; color: #f8fafc; font-size: 18px; font-weight: 800;">${p.businessName || p.name || 'Verified Professional'}</h3>
+                    <p style="margin: 0 0 6px 0; color: #94a3b8; font-size: 14px;">📍 ${p.fullAddress || p.locality || p.city || 'India'}</p>
+                    <div style="display: flex; gap: 12px; font-size: 13px; color: #cbd5e1; font-weight: 600; flex-wrap: wrap;">
+                        <span style="color: #fbbf24;">⭐ ${p.rating ? Number(p.rating).toFixed(1) : '4.5'} / 5.0</span>
+                        ${p.experienceYears ? `<span style="color: #38bdf8;">🏆 ${p.experienceYears} Yrs Exp</span>` : ''}
+                        ${p.startingPrice ? `<span style="color: #4ade80;">💰 ₹${p.startingPrice} ${p.priceUnit || ''}</span>` : ''}
+                    </div>
+                </div>
+            </div>
+            <div style="display: flex; gap: 10px; flex-shrink: 0;">
+                <a href="tel:${p.callNumber || p.whatsappNumber || ''}" style="background: #0284c7; color: white; padding: 10px 22px; border-radius: 25px; text-decoration: none; font-weight: bold; font-size: 14px;">📞 Call</a>
+                ${p.whatsappNumber ? `<a href="https://wa.me/91${String(p.whatsappNumber).replace(/[^0-9]/g, '')}" target="_blank" style="background: #25d366; color: white; padding: 10px 22px; border-radius: 25px; text-decoration: none; font-weight: bold; font-size: 14px;">💬 WhatsApp</a>` : ''}
+            </div>
+        </div>
+    `).join('');
+
     return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -153,9 +197,10 @@ function renderHomePage() {
         .btn-secondary:hover { background: rgba(37,211,102,0.12); border-color: #25d366; transform: translateY(-3px); }
         .founder-badge { display: inline-flex; align-items: center; background: rgba(56, 189, 248, 0.08); padding: 8px 18px; border-radius: 30px; border: 1px solid rgba(56, 189, 248, 0.25); margin-bottom: 24px; font-size: 14px; color: #93c5fd; }
         .founder-badge strong { color: #38bdf8; margin-left: 6px; }
-        .category-section { max-width: 1250px; margin: 60px auto 40px auto; padding: 0 24px; text-align: center; }
+        .section-container { max-width: 1250px; margin: 50px auto; padding: 0 24px; }
         .category-scroll { display: flex; gap: 20px; overflow-x: auto; padding: 20px 5px; scrollbar-width: none; -ms-overflow-style: none; }
         .category-scroll::-webkit-scrollbar { display: none; }
+        .pills-scroll { display: flex; gap: 12px; overflow-x: auto; padding: 10px 0; scrollbar-width: none; flex-wrap: wrap; justify-content: center; }
         footer { text-align: center; padding: 40px; color: #64748b; border-top: 1px solid rgba(255,255,255,0.05); margin-top: 80px; font-size: 14px; }
     </style>
 </head>
@@ -176,10 +221,26 @@ function renderHomePage() {
         </div>
         <div class="hero-image"><img src="${RAW_IMAGE_URL}" alt="Sandesh Koli - Founder RudraSpark"></div>
     </div>
-    <div class="category-section">
-        <h3 style="font-size: 22px; font-weight: 800; color: #fff; margin-bottom: 10px;">Explore Popular Categories & Rentals</h3>
+
+    <!-- Category Section -->
+    <div class="section-container" style="text-align: center;">
+        <h3 style="font-size: 22px; font-weight: 800; color: #fff; margin-bottom: 12px;">Explore Popular Categories & Rentals</h3>
         <div class="category-scroll">${catHtml}</div>
     </div>
+
+    <!-- Subcategories Pill Filters -->
+    <div class="section-container" style="text-align: center; margin-top: 20px;">
+        <h3 style="font-size: 20px; font-weight: 800; color: #38bdf8; margin-bottom: 16px;">Trending Services in Popular Cities</h3>
+        <div class="pills-scroll">${subCatHtml}</div>
+    </div>
+
+    <!-- Featured Verified Providers -->
+    ${featuredHtml ? `
+    <div class="section-container" style="margin-top: 50px;">
+        <h3 style="font-size: 24px; font-weight: 800; color: #fff; margin-bottom: 24px; text-align: center;">⭐ Top Verified Professionals on RudraSpark</h3>
+        <div>${featuredHtml}</div>
+    </div>` : ''}
+
     <footer><p>&copy; ${new Date().getFullYear()} RudraSpark. Founded by <strong>Sandesh Koli</strong>. All rights reserved.</p></footer>
 </body>
 </html>`;
