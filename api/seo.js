@@ -22,7 +22,16 @@ const STATE_FOLDERS = [
     "assam_grids",
     "goa_grids",
     "himachal_pradesh_grids",
-    "arunachal_pradesh_grids"
+    "arunachal_pradesh_grids",
+    "odisha_grids",
+    "punjab_grids",
+    "rajasthan_grids",
+    "tamil_nadu_grids",
+    "telangana_grids",
+    "uttar_pradesh_grids",
+    "west_bengal_grids",
+    "uttarakhand_grids",
+    "delhi_grids"
 ];
 
 // In-memory cache for warm serverless function instances
@@ -54,32 +63,42 @@ async function getProvidersForCity(city, subcategory) {
         return matched;
     }
 
+    // Candidate city filenames (e.g. navi_mumbai, navi-mumbai, navimumbai)
+    const cityVariants = [...new Set([
+        cityLower.replace(/-/g, '_'),
+        cityLower.replace(/_/g, '-'),
+        cityLower,
+        cityLower.replace(/[-_]/g, '')
+    ])];
+
     // 2. Fetch from jsDelivr CDN across state grid folders if not in local bundle
     for (const folder of STATE_FOLDERS) {
-        const cdnUrl = `${JSDELIVR_BASE}/${folder}/${cityLower}.json`;
-        try {
-            let data;
-            if (cdnCache.has(cdnUrl)) {
-                data = cdnCache.get(cdnUrl);
-            } else {
-                const res = await fetch(cdnUrl, { headers: { 'Accept': 'application/json' } });
-                if (res.ok) {
-                    data = await res.json();
-                    if (Array.isArray(data)) {
-                        cdnCache.set(cdnUrl, data);
+        for (const variant of cityVariants) {
+            const cdnUrl = `${JSDELIVR_BASE}/${folder}/${variant}.json`;
+            try {
+                let data;
+                if (cdnCache.has(cdnUrl)) {
+                    data = cdnCache.get(cdnUrl);
+                } else {
+                    const res = await fetch(cdnUrl, { headers: { 'Accept': 'application/json' } });
+                    if (res.ok) {
+                        data = await res.json();
+                        if (Array.isArray(data)) {
+                            cdnCache.set(cdnUrl, data);
+                        }
                     }
                 }
-            }
 
-            if (Array.isArray(data) && data.length > 0) {
-                const filtered = data.filter(p => {
-                    const pSub = (p.subcategory || p.primaryCategoryId || "").toLowerCase();
-                    return pSub.includes(subLower);
-                });
-                return filtered.length > 0 ? filtered : data;
+                if (Array.isArray(data) && data.length > 0) {
+                    const filtered = data.filter(p => {
+                        const pSub = (p.subcategory || p.primaryCategoryId || "").toLowerCase();
+                        return pSub.includes(subLower);
+                    });
+                    return filtered.length > 0 ? filtered : data;
+                }
+            } catch (e) {
+                // Continue checking next variant or state grid folder
             }
-        } catch (e) {
-            // Continue checking next state grid folder
         }
     }
 
