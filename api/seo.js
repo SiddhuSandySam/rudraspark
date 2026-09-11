@@ -40,19 +40,7 @@ async function getProvidersForCity(city, subcategory) {
     const cityLower = city.toLowerCase();
     const subLower = subcategory.toLowerCase();
 
-    // 1. First check local bundled providers
-    let matched = allProviders.filter(p => {
-        const pCity = (p.city || p.locality || "").toLowerCase();
-        const pSub = (p.subcategory || p.primaryCategoryId || "").toLowerCase();
-        const pAddr = (p.fullAddress || "").toLowerCase();
-        return (pCity.includes(cityLower) || pAddr.includes(cityLower)) && pSub.includes(subLower);
-    });
-
-    if (matched.length > 0) {
-        return matched;
-    }
-
-    // Candidate city filenames (e.g. navi_mumbai, navi-mumbai, navimumbai)
+    // Candidate city filenames (e.g. pune, navi_mumbai, navi-mumbai, navimumbai)
     const cityVariants = [...new Set([
         cityLower.replace(/-/g, '_'),
         cityLower.replace(/_/g, '-'),
@@ -60,7 +48,9 @@ async function getProvidersForCity(city, subcategory) {
         cityLower.replace(/[-_]/g, '')
     ])];
 
-    // 2. Fetch from jsDelivr CDN across state grid folders if not in local bundle
+    let cdnProviders = [];
+
+    // 1. Fetch from jsDelivr CDN FIRST (kaamwale-data repository with full ~3.56 lakh dataset)
     for (const folder of STATE_FOLDERS) {
         for (const variant of cityVariants) {
             const cdnUrl = `${JSDELIVR_BASE}/${folder}/${variant}.json`;
@@ -79,19 +69,34 @@ async function getProvidersForCity(city, subcategory) {
                 }
 
                 if (Array.isArray(data) && data.length > 0) {
-                    const filtered = data.filter(p => {
-                        const pSub = (p.subcategory || p.primaryCategoryId || "").toLowerCase();
-                        return pSub.includes(subLower);
-                    });
-                    return filtered.length > 0 ? filtered : data;
+                    cdnProviders = data;
+                    break;
                 }
             } catch (e) {
                 // Continue checking next variant or state grid folder
             }
         }
+        if (cdnProviders.length > 0) break;
     }
 
-    return [];
+    if (cdnProviders.length > 0) {
+        // Filter by subcategory/category if available, otherwise return all city pros without limits
+        const filtered = cdnProviders.filter(p => {
+            const pSub = (p.subcategory || p.primaryCategoryId || p.category || "").toLowerCase();
+            return pSub.includes(subLower);
+        });
+        return filtered.length > 0 ? filtered : cdnProviders;
+    }
+
+    // 2. Fallback to local bundled providers if CDN search returns empty
+    let matched = allProviders.filter(p => {
+        const pCity = (p.city || p.locality || "").toLowerCase();
+        const pSub = (p.subcategory || p.primaryCategoryId || "").toLowerCase();
+        const pAddr = (p.fullAddress || "").toLowerCase();
+        return (pCity.includes(cityLower) || pAddr.includes(cityLower)) && pSub.includes(subLower);
+    });
+
+    return matched;
 }
 
 const categoriesBar = [
@@ -165,6 +170,11 @@ module.exports = async (req, res) => {
     const urlPath = req.url.split('?')[0];
 
     res.setHeader('Cache-Control', 'public, s-maxage=86400, stale-while-revalidate=604800');
+
+    if (urlPath === '/sitemap.xml' || urlPath === '/sitemap') {
+        const sitemapHandler = require('./sitemap.js');
+        return sitemapHandler(req, res);
+    }
 
     if (urlPath === '/' || urlPath === '/index.html') {
         res.setHeader('Content-Type', 'text/html');
