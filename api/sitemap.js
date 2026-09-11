@@ -7,9 +7,20 @@ module.exports = async (req, res) => {
     urls.push(`<url><loc>${DOMAIN}/</loc><changefreq>daily</changefreq><priority>1.0</priority></url>`);
 
     const cities = [
-        'pune', 'mumbai', 'ulwe', 'navi-mumbai', 'thane', 'nagpur', 'nashik', 'aurangabad', 'kolhapur', 'solapur',
-        'delhi', 'bangalore', 'hyderabad', 'chennai', 'kolkata', 'ahmedabad', 'surat', 'jaipur', 'lucknow', 'patna',
-        'bhopal', 'indore', 'chandigarh', 'kochi', 'goa', 'guwahati', 'visakhapatnam', 'vadodara', 'rajkot', 'mysore'
+        // Maharashtra
+        'pune', 'mumbai', 'navi-mumbai', 'thane', 'nagpur', 'nashik', 'aurangabad', 'kolhapur', 'solapur', 'amravati', 'nanded', 'sangli', 'satara', 'ratnagiri', 'latur', 'dhule',
+        // Andhra Pradesh & Telangana
+        'visakhapatnam', 'vijayawada', 'guntur', 'tirupati', 'nellore', 'kurnool', 'kakinada', 'hyderabad', 'warangal', 'nizamabad',
+        // Puducherry & UTs
+        'puducherry', 'pondicherry', 'chandigarh', 'port-blair', 'jammu', 'srinagar', 'leh', 'daman', 'silvassa',
+        // North India
+        'delhi', 'gurgaon', 'faridabad', 'noida', 'ghaziabad', 'lucknow', 'kanpur', 'varanasi', 'agra', 'prayagraj', 'dehradun', 'haridwar', 'jaipur', 'jodhpur', 'udaipur', 'kota', 'amritsar', 'ludhiana', 'shimla',
+        // South India
+        'bangalore', 'mysore', 'mangalore', 'hubli', 'chennai', 'coimbatore', 'madurai', 'tiruchirappalli', 'kochi', 'trivandrum', 'kozhikode',
+        // East & North East
+        'kolkata', 'siliguri', 'durgapur', 'patna', 'gaya', 'muzaffarpur', 'bhagalpur', 'bhubaneswar', 'cuttack', 'ranchi', 'jamshedpur', 'guwahati', 'silchar', 'shillong', 'itanagar', 'imphal', 'agartala', 'gangtok',
+        // Central & West
+        'bhopal', 'indore', 'gwalior', 'jabalpur', 'raipur', 'bhilai', 'bilaspur', 'ahmedabad', 'surat', 'vadodara', 'rajkot', 'bhavnagar', 'goa', 'panaji', 'margao'
     ];
 
     const services = [

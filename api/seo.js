@@ -6,33 +6,22 @@ const GOOGLE_VERIFICATION = '<meta name="google-site-verification" content="ueLj
 const DOMAIN = "https://rudraspark.vercel.app";
 const JSDELIVR_BASE = "https://cdn.jsdelivr.net/gh/SiddhuSandySam/kaamwale-data@main";
 
-const STATE_FOLDERS = [
-    "maharashtra_cities",
-    "maharashtra_districts",
-    "maharashtra_grids",
-    "bihar_grids",
-    "karnataka_grids",
-    "gujarat_grids",
-    "andhra_pradesh_grids",
-    "kerala_grids",
-    "madhya_pradesh_grids",
-    "haryana_grids",
-    "chhattisgarh_grids",
-    "jharkhand_grids",
-    "assam_grids",
-    "goa_grids",
-    "himachal_pradesh_grids",
-    "arunachal_pradesh_grids",
-    "odisha_grids",
-    "punjab_grids",
-    "rajasthan_grids",
-    "tamil_nadu_grids",
-    "telangana_grids",
-    "uttar_pradesh_grids",
-    "west_bengal_grids",
-    "uttarakhand_grids",
-    "delhi_grids"
+const ALL_STATES_SLUGS = [
+    "andhra_pradesh", "arunachal_pradesh", "assam", "bihar", "chhattisgarh",
+    "goa", "gujarat", "haryana", "himachal_pradesh", "jharkhand", "karnataka",
+    "kerala", "madhya_pradesh", "maharashtra", "manipur", "meghalaya", "mizoram",
+    "nagaland", "odisha", "punjab", "rajasthan", "sikkim", "tamil_nadu",
+    "telangana", "tripura", "uttar_pradesh", "uttarakhand", "west_bengal",
+    "andaman_and_nicobar_islands", "chandigarh", "dadra_and_nagar_haveli_and_daman_and_diu",
+    "delhi", "jammu_and_kashmir", "ladakh", "lakshadweep", "puducherry",
+    "pondicherry", "daman_and_diu"
 ];
+
+const STATE_FOLDERS = ALL_STATES_SLUGS.flatMap(slug => [
+    `${slug}_grids`,
+    `${slug}_cities`,
+    `${slug}_districts`
+]);
 
 // In-memory cache for warm serverless function instances
 const cdnCache = new Map();
