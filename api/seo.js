@@ -113,9 +113,9 @@ const categoriesBar = [
 ];
 
 const catHtml = categoriesBar.map(c => `
-    <div style="background: linear-gradient(135deg, #1e293b, #0f172a); border: 1px solid rgba(56, 189, 248, 0.2); border-radius: 20px; padding: 20px 15px; text-align: center; width: 130px; height: 130px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 8px 25px rgba(0,0,0,0.3); flex-shrink: 0;">
-        <img src="${c.icon}" alt="${c.name}" style="width: 52px; height: 52px; object-fit: contain; margin-bottom: 8px;">
-        <div style="font-size: 12px; color: #f8fafc; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%;">${c.name}</div>
+    <div style="background: linear-gradient(135deg, #1e293b, #0f172a); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 20px; padding: 20px 15px; text-align: center; width: 135px; height: 135px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 10px 25px rgba(0,0,0,0.4); flex-shrink: 0; transition: all 0.25s ease;" onmouseover="this.style.transform='translateY(-6px)'; this.style.borderColor='#38bdf8'; this.style.boxShadow='0 15px 35px rgba(56,189,248,0.3)';" onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='rgba(56, 189, 248, 0.25)'; this.style.boxShadow='0 10px 25px rgba(0,0,0,0.4)';">
+        <img src="${c.icon}" alt="${c.name}" style="width: 54px; height: 52px; object-fit: contain; margin-bottom: 10px; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5));">
+        <div style="font-size: 13px; color: #f8fafc; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%;">${c.name}</div>
     </div>
 `).join('');
 
@@ -125,40 +125,59 @@ function renderHomePage() {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RudraSpark - India's Fastest Local Services & Rental Network</title>
-    <meta name="description" content="Connect with 3.5 Lakh+ verified local professionals and rental providers across 16+ states. Founded by Sandesh Koli.">
+    <title>RudraSpark - India's Fastest Local Services & Rental Ecosystem</title>
+    <meta name="description" content="Connect with 3.5 Lakh+ verified local professionals and rental providers across 36 states & UTs. Founded by Sandesh Koli.">
     ${GOOGLE_VERIFICATION}
     <link rel="canonical" href="${DOMAIN}/">
     <style>
         * { box-sizing: border-box; }
-        body { font-family: system-ui, sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 0; line-height: 1.6; }
-        .hero { max-width: 1200px; margin: 0 auto; padding: 60px 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 40px; }
-        .hero-content { flex: 1; min-width: 300px; }
-        .hero-image { flex: 1; min-width: 300px; text-align: center; }
-        .hero-image img { max-width: 100%; width: 420px; border-radius: 24px; box-shadow: 0 20px 50px rgba(26,115,232,0.3); border: 2px solid rgba(26,115,232,0.4); }
-        h1 { font-size: 42px; font-weight: 800; margin-bottom: 20px; color: #fff; }
-        h1 span { color: #38bdf8; }
-        p { font-size: 18px; color: #94a3b8; margin-bottom: 30px; }
-        .btn { display: inline-block; background: #1a73e8; color: #fff; padding: 16px 36px; border-radius: 30px; text-decoration: none; font-weight: bold; font-size: 16px; box-shadow: 0 10px 25px rgba(26,115,232,0.4); }
-        .founder-badge { display: inline-flex; align-items: center; background: rgba(255,255,255,0.05); padding: 8px 16px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px; font-size: 14px; color: #cbd5e1; }
+        body { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0b0f17; color: #f8fafc; margin: 0; padding: 0; line-height: 1.6; }
+        .navbar { background: rgba(11, 15, 23, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); padding: 18px 40px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.08); position: sticky; top: 0; z-index: 1000; }
+        .logo { font-size: 22px; font-weight: 900; color: #fff; text-decoration: none; letter-spacing: -0.5px; display: flex; align-items: center; gap: 8px; }
+        .logo span { color: #38bdf8; }
+        .nav-btn { background: #38bdf8; color: #0b0f17; padding: 10px 24px; border-radius: 25px; text-decoration: none; font-weight: 800; font-size: 14px; box-shadow: 0 4px 20px rgba(56,189,248,0.35); transition: all 0.2s; }
+        .nav-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(56,189,248,0.55); }
+        .hero { max-width: 1250px; margin: 0 auto; padding: 70px 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 50px; }
+        .hero-content { flex: 1.2; min-width: 320px; }
+        .hero-image { flex: 0.8; min-width: 320px; text-align: center; }
+        .hero-image img { max-width: 100%; width: 420px; border-radius: 28px; box-shadow: 0 25px 60px rgba(56,189,248,0.25); border: 2px solid rgba(56,189,248,0.3); transition: transform 0.3s; }
+        .hero-image img:hover { transform: scale(1.02); }
+        h1 { font-size: 46px; font-weight: 900; margin: 0 0 20px 0; color: #fff; letter-spacing: -1.5px; line-height: 1.18; }
+        h1 span { color: #38bdf8; text-shadow: 0 0 30px rgba(56,189,248,0.4); }
+        p { font-size: 18px; color: #94a3b8; margin-bottom: 35px; max-width: 580px; }
+        .hero-btns { display: flex; gap: 16px; flex-wrap: wrap; }
+        .btn { display: inline-flex; align-items: center; justify-content: center; padding: 16px 32px; border-radius: 30px; text-decoration: none; font-weight: 800; font-size: 15px; transition: all 0.25s; }
+        .btn-primary { background: linear-gradient(135deg, #0284c7, #38bdf8); color: #0b0f17; box-shadow: 0 10px 30px rgba(56,189,248,0.4); }
+        .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(56,189,248,0.6); }
+        .btn-secondary { background: rgba(255,255,255,0.05); color: #25d366; border: 1px solid rgba(37,211,102,0.35); }
+        .btn-secondary:hover { background: rgba(37,211,102,0.12); border-color: #25d366; transform: translateY(-3px); }
+        .founder-badge { display: inline-flex; align-items: center; background: rgba(56, 189, 248, 0.08); padding: 8px 18px; border-radius: 30px; border: 1px solid rgba(56, 189, 248, 0.25); margin-bottom: 24px; font-size: 14px; color: #93c5fd; }
         .founder-badge strong { color: #38bdf8; margin-left: 6px; }
-        .category-section { max-width: 1200px; margin: 60px auto; padding: 0 20px; text-align: center; }
-        .category-scroll { display: flex; gap: 20px; overflow-x: auto; padding: 15px 5px; }
-        footer { text-align: center; padding: 40px; color: #64748b; border-top: 1px solid rgba(255,255,255,0.05); margin-top: 60px; }
+        .category-section { max-width: 1250px; margin: 60px auto 40px auto; padding: 0 24px; text-align: center; }
+        .category-scroll { display: flex; gap: 20px; overflow-x: auto; padding: 20px 5px; scrollbar-width: none; -ms-overflow-style: none; }
+        .category-scroll::-webkit-scrollbar { display: none; }
+        footer { text-align: center; padding: 40px; color: #64748b; border-top: 1px solid rgba(255,255,255,0.05); margin-top: 80px; font-size: 14px; }
     </style>
 </head>
 <body>
+    <div class="navbar">
+        <a href="/" class="logo">⚡ <span>RUDRA</span>SPARK</a>
+        <a href="https://play.google.com/store/apps/details?id=com.sandeshkoli.kaamwale" class="nav-btn">📲 Get RudraSpark App</a>
+    </div>
     <div class="hero">
         <div class="hero-content">
-            <div class="founder-badge">🚀 Vision & Leadership <strong>Sandesh Koli</strong></div>
+            <div class="founder-badge">🚀 Vision & Leadership • <strong>Sandesh Koli</strong></div>
             <h1>India's Fastest <span>Local Services & Rental</span> Ecosystem</h1>
-            <p>Connecting you instantly with over <strong>3.5 Lakh+ verified professionals</strong> across 16+ states.</p>
-            <a href="https://play.google.com/store/apps/details?id=com.sandeshkoli.kaamwale" class="btn">📲 Download RudraSpark App</a>
+            <p>Connecting you instantly with over <strong>3.5 Lakh+ verified local professionals</strong> across 36 states & Union Territories.</p>
+            <div class="hero-btns">
+                <a href="https://play.google.com/store/apps/details?id=com.sandeshkoli.kaamwale" class="btn btn-primary">📲 Download RudraSpark App Free</a>
+                <a href="https://wa.me/918779666670" target="_blank" class="btn btn-secondary">💬 Chat with Founder</a>
+            </div>
         </div>
-        <div class="hero-image"><img src="${RAW_IMAGE_URL}" alt="Sandesh Koli"></div>
+        <div class="hero-image"><img src="${RAW_IMAGE_URL}" alt="Sandesh Koli - Founder RudraSpark"></div>
     </div>
     <div class="category-section">
-        <h3>Explore Popular Categories & Rentals</h3>
+        <h3 style="font-size: 22px; font-weight: 800; color: #fff; margin-bottom: 10px;">Explore Popular Categories & Rentals</h3>
         <div class="category-scroll">${catHtml}</div>
     </div>
     <footer><p>&copy; ${new Date().getFullYear()} RudraSpark. Founded by <strong>Sandesh Koli</strong>. All rights reserved.</p></footer>
@@ -211,67 +230,107 @@ module.exports = async (req, res) => {
             </div>
         `).join('') : `<p style="color: #94a3b8; text-align: center; padding: 30px;">Explore all verified ${subcategory} experts in ${city} on the RudraSpark App!</p>`;
 
+        const schemaData = JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "ItemList",
+            "name": `Best ${subcategory} in ${city}`,
+            "itemListElement": matched.slice(0, 10).map((p, idx) => ({
+                "@type": "ListItem",
+                "position": idx + 1,
+                "item": {
+                    "@type": "LocalBusiness",
+                    "name": p.businessName || p.name || `${subcategory} in ${city}`,
+                    "address": {
+                        "@type": "PostalAddress",
+                        "addressLocality": p.city || city,
+                        "addressCountry": "IN"
+                    },
+                    "aggregateRating": {
+                        "@type": "AggregateRating",
+                        "ratingValue": p.rating ? Number(p.rating).toFixed(1) : "4.5",
+                        "reviewCount": p.experienceYears ? Number(p.experienceYears) * 12 : 30
+                    }
+                }
+            }))
+        });
+
         const pageHtml = `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Best ${subcategory} in ${city} | Verified Local Experts - RudraSpark</title>
-    <meta name="description" content="Find trusted ${subcategory} in ${city} on RudraSpark. Founded by Sandesh Koli.">
+    <meta name="description" content="Find trusted ${subcategory} in ${city} on RudraSpark. Verified local experts, call & WhatsApp directly. Founded by Sandesh Koli.">
     ${GOOGLE_VERIFICATION}
     <link rel="canonical" href="${DOMAIN}/${city.toLowerCase()}-${subcategory.toLowerCase().replace(/\s+/g, '-')}.html">
+    <script type="application/ld+json">${schemaData}</script>
     <style>
         * { box-sizing: border-box; }
-        body { font-family: system-ui, sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 0; line-height: 1.6; }
-        .navbar { background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(10px); padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.08); position: sticky; top: 0; z-index: 100; }
-        .logo { font-size: 20px; font-weight: 800; color: #fff; text-decoration: none; display: flex; align-items: center; gap: 10px; }
+        body { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0b0f17; color: #f8fafc; margin: 0; padding: 0; line-height: 1.6; }
+        .navbar { background: rgba(11, 15, 23, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); padding: 18px 40px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.08); position: sticky; top: 0; z-index: 1000; }
+        .logo { font-size: 22px; font-weight: 900; color: #fff; text-decoration: none; letter-spacing: -0.5px; display: flex; align-items: center; gap: 8px; }
         .logo span { color: #38bdf8; }
-        .hero { max-width: 1200px; margin: 0 auto; padding: 50px 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 40px; }
-        .hero-content { flex: 1; min-width: 300px; }
-        .hero-image { flex: 1; min-width: 300px; text-align: center; }
-        .hero-image img { max-width: 100%; width: 380px; border-radius: 24px; box-shadow: 0 20px 50px rgba(26,115,232,0.3); border: 2px solid rgba(26,115,232,0.4); }
-        h1 { font-size: 38px; font-weight: 800; margin-bottom: 20px; color: #fff; letter-spacing: -1px; }
-        h1 span { color: #38bdf8; }
-        p { font-size: 16px; color: #94a3b8; margin-bottom: 25px; }
+        .nav-btn { background: #38bdf8; color: #0b0f17; padding: 10px 24px; border-radius: 25px; text-decoration: none; font-weight: 800; font-size: 14px; box-shadow: 0 4px 20px rgba(56,189,248,0.35); transition: all 0.2s; }
+        .nav-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(56,189,248,0.55); }
+        .hero { max-width: 1250px; margin: 0 auto; padding: 60px 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 40px; }
+        .hero-content { flex: 1.2; min-width: 320px; }
+        .hero-image { flex: 0.8; min-width: 320px; text-align: center; }
+        .hero-image img { max-width: 100%; width: 400px; border-radius: 28px; box-shadow: 0 25px 60px rgba(56,189,248,0.25); border: 2px solid rgba(56,189,248,0.3); }
+        h1 { font-size: 42px; font-weight: 900; margin: 0 0 16px 0; color: #fff; letter-spacing: -1.2px; line-height: 1.2; }
+        h1 span { color: #38bdf8; text-shadow: 0 0 25px rgba(56,189,248,0.4); }
+        p { font-size: 17px; color: #94a3b8; margin-bottom: 25px; max-width: 580px; }
         .stats { display: flex; gap: 20px; margin-bottom: 30px; }
-        .stat-item h3 { font-size: 24px; color: #f8fafc; margin: 0; font-weight: 800; }
-        .stat-item p { font-size: 13px; margin: 0; color: #64748b; }
-        .stat-item { background: rgba(255,255,255,0.03); padding: 12px 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); }
-        .container { max-width: 900px; margin: 0 auto; padding: 20px; }
-        .cta-banner { background: linear-gradient(135deg, #1a73e8, #0284c7); border-radius: 20px; padding: 40px; text-align: center; box-shadow: 0 15px 40px rgba(26,115,232,0.4); margin-top: 50px; }
-        .btn { display: inline-block; background: #fff; color: #0f172a; padding: 16px 36px; border-radius: 30px; text-decoration: none; font-weight: bold; font-size: 16px; }
-        .founder-badge { display: inline-flex; align-items: center; background: rgba(255,255,255,0.05); padding: 8px 16px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 15px; font-size: 14px; color: #cbd5e1; }
+        .stat-item { background: rgba(255,255,255,0.03); padding: 12px 20px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.08); }
+        .stat-item h3 { font-size: 24px; color: #38bdf8; margin: 0; font-weight: 900; }
+        .stat-item p { font-size: 13px; margin: 0; color: #94a3b8; }
+        .hero-btns { display: flex; gap: 16px; flex-wrap: wrap; }
+        .btn { display: inline-flex; align-items: center; justify-content: center; padding: 15px 30px; border-radius: 30px; text-decoration: none; font-weight: 800; font-size: 15px; transition: all 0.25s; }
+        .btn-primary { background: linear-gradient(135deg, #0284c7, #38bdf8); color: #0b0f17; box-shadow: 0 10px 30px rgba(56,189,248,0.4); }
+        .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(56,189,248,0.6); }
+        .btn-secondary { background: rgba(255,255,255,0.05); color: #25d366; border: 1px solid rgba(37,211,102,0.35); }
+        .btn-secondary:hover { background: rgba(37,211,102,0.12); border-color: #25d366; transform: translateY(-3px); }
+        .founder-badge { display: inline-flex; align-items: center; background: rgba(56, 189, 248, 0.08); padding: 8px 18px; border-radius: 30px; border: 1px solid rgba(56, 189, 248, 0.25); margin-bottom: 20px; font-size: 14px; color: #93c5fd; }
         .founder-badge strong { color: #38bdf8; margin-left: 6px; }
-        .category-section { max-width: 1200px; margin: 60px auto 40px auto; padding: 0 20px; text-align: center; }
-        .category-scroll { display: flex; gap: 20px; overflow-x: auto; padding: 15px 5px; }
-        footer { text-align: center; padding: 40px; color: #64748b; border-top: 1px solid rgba(255,255,255,0.05); margin-top: 60px; }
+        .container { max-width: 950px; margin: 0 auto; padding: 20px; }
+        .cta-banner { background: linear-gradient(135deg, #0284c7, #0f172a); border-radius: 24px; padding: 40px; text-align: center; box-shadow: 0 20px 50px rgba(2,132,199,0.35); margin-top: 60px; border: 1px solid rgba(56,189,248,0.3); }
+        .category-section { max-width: 1250px; margin: 60px auto 40px auto; padding: 0 24px; text-align: center; }
+        .category-scroll { display: flex; gap: 20px; overflow-x: auto; padding: 20px 5px; scrollbar-width: none; -ms-overflow-style: none; }
+        .category-scroll::-webkit-scrollbar { display: none; }
+        footer { text-align: center; padding: 40px; color: #64748b; border-top: 1px solid rgba(255,255,255,0.05); margin-top: 80px; font-size: 14px; }
     </style>
 </head>
 <body>
-    <div class="navbar"><a href="/" style="color:#fff;text-decoration:none;font-weight:bold;">🛠️ RudraSpark</a><span>Founder: <strong>Sandesh Koli</strong></span></div>
+    <div class="navbar">
+        <a href="/" class="logo">⚡ <span>RUDRA</span>SPARK</a>
+        <a href="https://play.google.com/store/apps/details?id=com.sandeshkoli.kaamwale" class="nav-btn">📲 Get RudraSpark App</a>
+    </div>
     <div class="hero">
         <div class="hero-content">
-            <div class="founder-badge">🚀 Vision & Leadership <strong>Sandesh Koli</strong></div>
+            <div class="founder-badge">🚀 Vision & Leadership • <strong>Sandesh Koli</strong></div>
             <h1>Top Verified <span>${subcategory}</span> in ${city}</h1>
-            <p>Connect instantly with trusted local professionals verified by RudraSpark.</p>
+            <p>Connect instantly with trusted local professionals verified by RudraSpark across 36 states & UTs.</p>
             <div class="stats">
                 <div class="stat-item"><h3>3.5L+</h3><p>Verified Pros</p></div>
-                <div class="stat-item"><h3>16+</h3><p>States</p></div>
+                <div class="stat-item"><h3>36</h3><p>States & UTs</p></div>
                 <div class="stat-item"><h3>100%</h3><p>Direct Connect</p></div>
             </div>
-            <a href="https://play.google.com/store/apps/details?id=com.sandeshkoli.kaamwale" class="btn" style="background: #1a73e8; color: #fff;">📲 Download RudraSpark App</a>
+            <div class="hero-btns">
+                <a href="https://play.google.com/store/apps/details?id=com.sandeshkoli.kaamwale" class="btn btn-primary">📲 Download RudraSpark App Free</a>
+                <a href="https://wa.me/918779666670" target="_blank" class="btn btn-secondary">💬 Chat with Founder</a>
+            </div>
         </div>
-        <div class="hero-image"><img src="${RAW_IMAGE_URL}" alt="Sandesh Koli"></div>
+        <div class="hero-image"><img src="${RAW_IMAGE_URL}" alt="Sandesh Koli - Founder RudraSpark"></div>
     </div>
     <div class="container">
-        <h2>Available ${subcategory} Professionals in ${city}</h2>
+        <h2 style="font-size: 24px; font-weight: 800; color: #fff; margin-bottom: 24px;">Available ${subcategory} Experts in ${city}</h2>
         <div>${providerCardsHtml}</div>
         <div class="cta-banner">
-            <h2 style="margin: 0 0 10px 0; color: #fff; font-size: 26px;">Explore All 3.5 Lakh+ Experts on RudraSpark</h2>
-            <p style="margin: 0 0 20px 0; color: #e0f2fe; font-size: 15px;">Data verified across 16+ states on RudraSpark.</p>
-            <a href="https://play.google.com/store/apps/details?id=com.sandeshkoli.kaamwale" class="btn">📲 Download RudraSpark App</a>
+            <h2 style="margin: 0 0 12px 0; color: #fff; font-size: 28px; font-weight: 900;">Explore All 3.5 Lakh+ Experts on RudraSpark</h2>
+            <p style="margin: 0 0 25px 0; color: #93c5fd; font-size: 16px;">Data verified across 36 states & Union Territories on RudraSpark.</p>
+            <a href="https://play.google.com/store/apps/details?id=com.sandeshkoli.kaamwale" class="btn btn-primary" style="background: #fff; color: #0f172a;">📲 Download RudraSpark App Free</a>
         </div>
     </div>
-    <div class="category-section"><h3>Explore Popular Categories & Rentals</h3><div class="category-scroll">${catHtml}</div></div>
+    <div class="category-section"><h3 style="font-size: 22px; font-weight: 800; color: #fff; margin-bottom: 10px;">Explore Popular Categories & Rentals</h3><div class="category-scroll">${catHtml}</div></div>
     <footer><p>&copy; ${new Date().getFullYear()} RudraSpark. Founded by <strong>Sandesh Koli</strong>. All rights reserved.</p></footer>
 </body>
 </html>`;
